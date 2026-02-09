@@ -1,0 +1,86 @@
+###user register
+POST http://localhost:4000/user-api/users
+Content-Type: application/json
+
+{
+    "firstName":"Virat",
+    "lastName":"test",
+    "email":"virat@gmail.com",
+    "password":"virat123",
+    "profileImageURL":"https://example.com/avatars/user.png"
+}
+
+###author register
+POST http://localhost:4000/author-api/users
+Content-Type: application/json
+
+{
+    "firstName":"rohit",
+    "lastName":"Sharma",
+    "email":"rohit.author@gmail.com",
+    "password":"rohit123",
+    "profileImageURL":"https://example.com/avatars/author.png"
+}
+
+###user login
+POST http://localhost:4000/user-api/authenticate
+Content-Type: application/json
+
+{
+    "email":"virat@gmail.com",
+    "password":"virat123",
+    "role": "USER"
+}
+
+###author login
+POST http://localhost:4000/author-api/authenticate
+Content-Type: application/json
+
+{
+    "email":"rohit.author@gmail.com",
+    "password":"rohit123",
+    "role": "AUTHOR"
+}
+
+###create the article
+POST http://localhost:4000/author-api/articles
+Content-Type: application/json
+
+{
+    "author":"698975252c161d99734b0283",
+    "title":"java",
+    "category":"programming",
+    "content":"the most demanding programming language"
+}
+
+###read the articles of author by the id
+GET http://localhost:4000/author-api/article/6989797206d871d2d47cb1f7 
+
+### edit the articles
+PUT http://localhost:4000/author-api/articles/69897fc5daa4c278576dcd3f
+Content-Type: application/json
+
+{
+    "author":"6989797206d871d2d47cb1f7",
+    "content":"the most demanding programming language and an object oriented language. very conceptual and requires determination"
+}
+
+
+###soft delete
+DELETE http://localhost:4000/author-api/articles/69897ecc2b354897c7da1767/author/698975252c161d99734b0283
+
+###logout
+POST http://localhost:4000/logout
+
+
+### read the articles
+GET http://localhost:4000/user-api/users/6989afd2e6ef419e9df2c208
+### add comments to the articles
+PUT http://localhost:4000/user-api/users
+Content-Type: application/json
+
+{
+    "userId" : "6989afd2e6ef419e9df2c208",
+    "articleId":"69897fc5daa4c278576dcd3f",
+    "comments":"very insightful article!"
+}

@@ -1,0 +1,388 @@
+server.js
+1. creation of a http server
+//npm install express
+import exp from 'express';
+
+const app = exp();
+
+2. body parser middleware - without this put and delete request wont work properly
+app.use(exp.json())
+  ->import cookieParser from 'cookie-parser';  
+    app.use(cookieParser()); // Place this near app.use(exp.json())
+
+3. error handling middleware - keep this at the end so that it doesnt interfere with the other parsers
+function errorHandler(err,req,res,next){
+    res.json({message:"error has occured!",reason:err.message})
+}
+app.use(errorHandler)
+
+4. Connect to database(i.e mongodb)
+//npm install mongoose
+import {connect} from 'mongoose'
+
+async function connectDB(){
+    try{
+        let res = await connect('mongodb://localhost:27017/<database_name>')
+        app.listen(4000,()=>console.log("listening to port 4000"))
+        console.log("db connection success!")
+    }
+    catch(err){
+        console.log("error has occured while connecting to the database")
+    }
+}
+
+5. getting the apis from the apis folder
+import {userApp} from "../apis/userApi.js"
+import {productApp} from "../apis/productApi.js"
+
+app.use('/apis/user-api',userApp)
+app.use('/apis/product-api',productApp)
+
+###################################################################
+
+create a user schema(models/UserModel.js)
+-------------------------
+import {Schema,model} from 'mongoose'
+
+const userSchema = new Schema({
+    <name of attribute/column>:{
+        type:,
+        required:[true,"<error-msg>"],
+        default:<value>
+        minlength/min(if it is a number):[]
+    },
+    .....
+},{
+    strict:"throw", // setting this to allow makes sure that developers will be able to see the errors if any and resolve them
+    timestamps:true, // creates timestamps (createdAt and modifiedAt)
+    versionKey:false // ensures that versionKey will be added to the db
+})
+export const UserModel = model("<collection_name(very important....if wrong is given then a lot of problems we will caused and it should be singular)>",userSchema)
+
+example:
+import {Schema,model} from 'mongoose'
+
+// const cartSchema = new Schema({
+//     product:{
+//         type:Schema.Types.ObjectId, //refers to the id of the product but doesnt know its internal structure
+//         ref: "ecomDB" //name of the product model
+//     }
+// })
+const cartSchema = new Schema({
+    product:{
+        type:Schema.Types.ObjectId,
+        ref:"ecomDB"
+    },
+    quantity:{
+        type:Number,
+        default:1,
+    }
+})
+
+const userSchema = new Schema({
+    name:{
+        type:String,
+        required:[true,"name is required"]
+    },
+    email:{
+        type:String,
+        required:[true,"email is required"],
+        unique:[true,'duplicate user!'] //not a validator but only an option/helper, add to index
+    },
+    password:{
+        type:String,
+        required:[true,"password is required"],
+        minlength:[4,"min length is 4"]
+    },
+    cart:{
+        type:[cartSchema] //here we will not store the product object but we will store the id which will be the reference of the product object
+    }
+},{
+    strict:"throw",
+    timestamps:true
+})
+
+export const UserModel = model('eUser',userSchema)
+
+-------------------------
+create a product schema(models/ProductModel.js)
+-------------------------
+import {Schema,model} from 'mongoose'
+
+const productSchema = new Schema({
+    <name of attribute/column>:{
+        type:,
+        required:[true,"<error-msg>"],
+        default:<value>
+        minlength/min(if it is a number):[]
+    },
+    .....
+},{
+    strict:"throw", // setting this to allow makes sure that developers will be able to see the errors if any and resolve them
+    timestamps:true, // creates timestamps (createdAt and modifiedAt)
+    versionKey:false // ensures that versionKey will be added to the db
+})
+export const ProductModel = model("<collection_name(very important....if wrong is given then a lot of problems we will caused and it should be singular)>",productSchema)
+
+
+example:
+import {Schema,model} from 'mongoose'
+
+const productSchema = new Schema({
+    productName:{
+        type:String,
+        required:[true,"product name required"]
+    },
+    price:{
+        type:Number,
+        required:[true,"price is required"]
+    },
+    brand:{
+        type:String,
+        required:[true,"required: brand"]
+    }
+},{
+    strict:"throw",
+    timestamps:true
+})
+
+export const ProductModel = model("ecomDB",productSchema)
+-------------------------
+
+###################################################################
+api routes-for now we are just using postman api or rest client to check if the requests are correct or not later will be for the frontend
+CRUD operations are done here and also few other 
+apis/userApi.js
+------------------
+//create a mini express using the Router() this is done so that the code will be clean and we can differentiate which is prodcut route and user route
+import exp from 'express'
+import {} from "../models/UserModel.js"
+import {hash,compare} from 'bcryptjs'
+import {verifyToken} from "/middleware/verifyToken.js"
+import jwt from 'jsonwebtoken'
+
+
+export const userApp = exp.Router()
+
+//get users
+userApp.get('/users',async (req,res)=>{
+    //read users from the db
+    let user = await UserModel.find()
+    res.status(<code>).json({message:"",payload:user})
+})
+
+//create users
+userApp.post("/users",async(req,res)=>{
+    //get the user from the request body
+    let user = req.body;
+    //run validators to avoid the password trap
+    await new UserModel(user).validate();
+    //hash the password
+    let hashedPassword = await hashed(user.password,12)
+    //create a new user document and replace the password
+    let userDoc = await UserModel(user)
+    userDoc.password = hashedPassword
+    //save it to db
+    await userDoc.save({validateBeforeSave:false})
+    //send res
+    res.status(201).json({message:"user created!"})
+})
+
+//authenticate - post method is used here
+userApp.post("/auth",async (req,res)=>{
+    //get the details from request body
+    let {username,password} = req.body
+    //check username if it exists or not
+    let userDB = await UserModel.findOne({username:username})
+    if(userDB === null){
+        return res.status(404).json({message:"user not found!"})
+    }
+    //check for password as well
+    //since the password is hashed we are going to use the compare from bcryptjs
+    let passMatch = await compare(password,userDB.password) //compare() : checks the passwords if they match like if the password is hashed then it converts to a normal one and then checks, returns a boolean
+    if(!passMatch){
+        return res.status().json({})
+    }
+    //create signed tokens
+    let signedToken = jwt.sign({username:username},
+    'secret', //secret key - used to verify the generated token
+    {expiresIn:20} // expiration time in seconds
+    )
+    //save the token as an httpOnly cookie in res
+    res.cookie('token',signedToken,{httpOnly:true,
+    secure:false, //since we are using only http
+    sameSite:"lax" //lax - relax the restrictions
+    })
+    //send the res
+    res.status().json({})
+})
+
+
+//read user by their id
+userApp.get('/users/:uid',async(req,res)=>{
+    //get the id from the url
+    let uid = req.params.uid
+    //find the user in db
+    let user = await UserModel.findById(uid)
+    //send res
+    res.status().json({message:"",payload:})
+})
+
+//read the user : projection(display only necessary content)
+userApp.get('/users/:id',async(req,res)=>{
+    //get user
+    let user = await UserModel.find({},{username:1,_id:0,age:1})
+    //send res
+    res.status(200).json({message:"",payload:})
+})
+
+//update the user details
+userApp.put("/users/:id",async(req,res)=>{
+    //get the id
+    let uid = req.params.id
+    //get the modified user from the body
+    let modifiedUser = req.body
+    //make the updates
+    let updatedUser = await UserModel.findByIdAndUpdate(uid,
+    {$set:{...modifiedUser}}, //object destructuring - 
+    {new:true,runValidators:true}) //runValidators ensures that while updating the details the conditions set in the schema are going to be followed
+    // if this is not set then validators run only during creation of the user
+
+    //send res
+    res.status().json()
+})
+
+//update the cart of the user
+userApp.put('/user-cart/userid/:uid/productid/:pid',async(req,res)=>{
+    //get the uid and pid
+    let {uid,pid} = req.params
+    //check if user exists
+    let user = await UserModel.findById(uid)
+    if(!user){return res.status().json()}
+    //check if product exists
+    let product = user.cart.find(i=> i.product._id.equals(pid))
+    if(product){
+        //increment the count of the product
+        let modifiedUser = await UserModel.findOneAndUpdate(
+            {"cart.product":pid},
+            {$inc:{"cart.$.quantity":1}},
+            {new:true}
+        ).populate("cart.product","productName price")
+        //send res
+        return res.status().json({message:"",payload:modifiedUser})
+    }else{
+        //push the product to cart
+        let modifiedUser = await UserModel.findByIdAndUpdate(
+            uid,
+            {$push:{cart:{product:pid,quantity:1}}},
+            {new:true}
+        ).populate("cart.product","productName price")
+        //send res
+        return res.status().json({message:"",payload:modifiedUser})
+    }
+})
+
+//delete the user
+userApp.delete('/users/:id',async(req,res)=>{
+    //get the id from the url
+    let uid = req.params.id
+    //find the user
+    let user = await UserModel.findByIdAndDelete(uid)
+    //send the res 
+    res.status().json({message:"",payload:})
+})
+-------------------------------
+apis/productApi.js
+--------------------------
+import exp from 'express'
+
+export const productApp = exp.Router()
+
+//create products
+productApp.post('/products',async(req,res)=>{
+    //get the product from the body
+    let prod = req.body
+    //create a document
+    let productDoc=new ProductModel(prod)
+    //save
+    await prodDocument.save()
+    //send res
+    res.status().json({})
+})
+
+//get the products
+productApp.get('/products',async(req,res)=>{
+    //get the products list
+    let prodList = await ProductModel.find()
+    //send res
+    res.status().json({message:"",payload:prodList})
+})
+----------------------------------------------------
+
+####################################################################
+req.http(for validating the requests)
+
+### is this used to comment and at the same time distinguish between the routes
+a. GET : => display the content in the collection
+
+b. POST : =>create a row in the collection
+          =>requires Content-Type: application/json
+
+            {}
+
+c. PUT : => update the details
+         =>requires Content-Type: application/json (in some cases this content-type is not required)
+
+           {}
+
+d. DELETE : => delete something
+
+
+########################################################################
+additional middlewares - 
+middleware/verifyToken.js
+-------------------------------
+import jwt from 'jsonwebtoken'
+
+export function verifyToken(req,res,next){
+    //logic
+    //1. get the token from req cookies/request 
+    let signedToken = req.cookies.token
+    if(!signedToken){return res.status().json()}
+    //2. verify the token
+    let decodedToken = jwt.verify(signedToken,"secret")
+    next()
+}
+
+in userApi.js
+userApp.get('/users/:id', verifyToken, async(req,res)=>{ ... })
+in server.js
+app.use(cookieParser())
+
+-------------------------------
+########################################################################
+ADDITIONAL THINGS TO IMPORT / INSTALL
+bcryptjs
+jsonwebtoken
+cookie-parser
+########################################################################
+Status Codes:
+200: OK (Success)
+201: Created (New data added)
+400: Bad Request (User error)
+401: Unauthorized (Login failed)
+404: Not Found
+500: Server Error
+########################################################################
+->Never hardcode secrets (like 'secret' or your MongoDB URL) in the code. Use a .env file and the dotenv package so hackers can't see them on GitHub.
+->secret key 
+->whenever a route is to be made authenticated route then the cookies attach itself to the request while transfer
+->cookie is the storage location while the token is the value
+    1.post request from client to login route
+    2.lr stores the token in the cookie storage
+    3. send response to client
+    4. client now while any request is sent it will first check the cookie storage
+    5. from there it will read the tokens
+    6. client now sends the req with token to what ever route(public)
+        if the route is public then no issue
+        if the route is protected then there will be a middleware which will check the tokens, then only the protected route is accessible
