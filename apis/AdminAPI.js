@@ -71,4 +71,3 @@ adminApp.put('/unblock/:uid/adminId/:adminId',verifyToken,adminCheck,async (req,
     //send the res
     res.status(200).json({message:"user is unblocked!"})
 })
-//changing the password
