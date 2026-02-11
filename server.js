@@ -1,10 +1,12 @@
+//this is the entry point of the entire backend
 import exp from 'express'
 import {connect} from 'mongoose'
 import {config} from 'dotenv'
 import {userApp} from './apis/UserAPI.js'
 import {authorApp} from './apis/AuthorAPI.js'
-import {adminApp} from './apis/AdminAPI.js'
 import cookieParser from 'cookie-parser'
+import { commonApp } from './apis/CommonAPI.js'
+import { adminApp } from './apis/AdminAPI.js'
 
 config() //process.env
 
@@ -21,6 +23,7 @@ app.use(cookieParser())
 app.use('/user-api',userApp)
 app.use('/author-api',authorApp)
 app.use('/admin-api',adminApp)
+app.use('/common-api',commonApp)
 
 
 //connect to db
@@ -36,14 +39,19 @@ const connectDB=async()=>{
 }
 connectDB()
 
-app.post('/logout',(req,res)=>{
-    //clear the cookie named 'token'
-    res.clearCookie('token', {
-        httpOnly:true,
-        secure:false,
-        sameSite:"lax"
-    })
-    res.status(200).json({message:"logged out successfully"})
+// app.post('/logout',(req,res)=>{
+//     //clear the cookie named 'token'
+//     res.clearCookie('token', {
+//         httpOnly:true,
+//         secure:false,
+//         sameSite:"lax"
+//     })
+//     res.status(200).json({message:"logged out successfully"})
+// })
+
+//dealing with invalid paths
+app.use((req,res,next)=>{
+    return res.json({message:`${req.url} is an invalid path`})
 })
 
 app.use((err,req,res,next)=>{

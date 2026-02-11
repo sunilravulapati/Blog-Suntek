@@ -1,14 +1,4 @@
-###user register
-POST http://localhost:4000/user-api/users
-Content-Type: application/json
-
-{
-    "firstName":"Virat",
-    "lastName":"test",
-    "email":"virat@gmail.com",
-    "password":"virat123",
-    "profileImageURL":"https://example.com/avatars/user.png"
-}
+###AUTHOR
 
 ###author register
 POST http://localhost:4000/author-api/users
@@ -69,9 +59,20 @@ Content-Type: application/json
 ###soft delete
 DELETE http://localhost:4000/author-api/articles/69897ecc2b354897c7da1767/author/698975252c161d99734b0283
 
-###logout
-POST http://localhost:4000/logout
+###--------------------------------
+###users!
 
+###user register
+POST http://localhost:4000/user-api/users
+Content-Type: application/json
+
+{
+    "firstName":"test",
+    "lastName":"test",
+    "email":"test@gmail.com",
+    "password":"test123",
+    "profileImageURL":"https://example.com/avatars/user.png"
+}
 
 ### read the articles
 GET http://localhost:4000/user-api/users/6989afd2e6ef419e9df2c208
@@ -83,4 +84,43 @@ Content-Type: application/json
     "userId" : "6989afd2e6ef419e9df2c208",
     "articleId":"69897fc5daa4c278576dcd3f",
     "comments":"very insightful article!"
+}
+
+###----------------------
+###ADMIN
+
+### read the articles
+GET http://localhost:4000/admin-api/articles/698ac00673730c8f326139a9
+
+###block users
+PUT http://localhost:4000/admin-api/block/698ac22bd1d858e24b8d68b1/adminId/698ac00673730c8f326139a9
+
+###unblock the users
+PUT http://localhost:4000/admin-api/unblock/698ac22bd1d858e24b8d68b1/adminId/698ac00673730c8f326139a9
+
+###----------------------
+### login without needing the role
+POST http://localhost:4000/common-api/login
+Content-Type: application/json
+
+{
+    "email":"test@gmail.com",
+    "password":"test123"
+}
+
+
+###logout 
+GET http://localhost:4000/common-api/logout
+
+###test req
+GET http://localhost:4000/test
+
+###change password!
+PUT http://localhost:4000/common-api/change-password
+Content-Type: application/json
+
+{
+    "email":"test@gmail.com",
+    "oldPassword":"test123",
+    "newPassword":"test12345"
 }

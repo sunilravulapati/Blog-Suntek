@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Forms</title>
+  </head>
+  <body>
+    <h1>Form</h1>
+    <form>
+      <div>
+        <label for="un">Username:</label>
+        <input
+          type="text"
+          name="username"
+          id="un"
+          placeholder="enter the username"
+          required
+          minlength="4"
+        /><br /><br />
+      </div>
+      <div>
+        <label for="psw">Password:</label>
+        <input
+          type="password"
+          name="psw"
+          id="psw"
+          placeholder="enter the password"
+        /><br /><br />
+      </div>
+      <div>
+        <label for="em">Email:</label>
+        <input
+          type="email"
+          name="email"
+          id="em"
+          placeholder="enter the email"
+        /><br /><br />
+      </div>
+      <div>
+        <label for="dob">Date of Birth:</label>
+        <input type="date" name="dob" id="dob" /><br />
+      </div>
+      <div>
+        <label for="">Select Your Skills:</label>
+        <div>
+          <input type="checkbox" name="html" id="html" />
+          <label for="html">HTML</label>
+        </div>
+        <div>
+          <input type="checkbox" name="react" id="react" />
+          <label for="react">REACT</label>
+        </div>
+        <div>
+          <input type="checkbox" name="css" id="css" />
+          <label for="css">CSS</label>
+        </div>
+      </div>
+
+      <div>
+        <label>Select Gender:</label>
+        <div>
+          <input type="radio" name="gender" id="male" />
+          <label for="male">MALE</label>
+        </div>
+        <div>
+          <input type="radio" name="gender" id="female" />
+          <label for="female">FEMALE</label>
+        </div>
+      </div>
+
+      <div>
+        <label for="">Select a State</label>
+        <select name="state" id="state">
+            <option value="tg">Telangana</option>
+            <option value="ap">Andhra Pradesh</option>
+        </select>
+      </div>
+      <br />
+      <button type="submit">Submit</button>
+    </form>
+  </body>
+</html>

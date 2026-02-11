@@ -1,0 +1,19 @@
+h1{
+    color: blue;
+    text-align: center;
+    font-size: 50px;
+    background-color: orange;
+    padding: 9px;
+    font-family: "Oswald", sans-serif;
+}
+*{
+    background-color: antiquewhite;
+}
+
+img{
+    /* display: block;
+    margin:auto */
+    float: right;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap');

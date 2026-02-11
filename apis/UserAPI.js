@@ -19,20 +19,20 @@ userApp.post('/users',async (req,res) => {
 })
 
 //authenticate/login user
-userApp.post('/authenticate',async (req,res) => {
-    //get user cred object
-    let userCred = req.body
-    //call authenticate function
-    let {token,user} = await authenticate(userCred)
-    //save the token as a httponly cookie
-    res.cookie("token",token,{
-        httpOnly:true,
-        secure:false,
-        sameSite:"lax"
-    })
-    //send the res
-    res.status(200).json({message:"user logged in!",payload:user})
-})
+// userApp.post('/authenticate',async (req,res) => {
+//     //get user cred object
+//     let userCred = req.body
+//     //call authenticate function
+//     let {token,user} = await authenticate(userCred)
+//     //save the token as a httponly cookie
+//     res.cookie("token",token,{
+//         httpOnly:true,
+//         secure:false,
+//         sameSite:"lax"
+//     })
+//     //send the res
+//     res.status(200).json({message:"user logged in!",payload:user})
+// })
 
 //read all articles - protected route
 userApp.get('/users/:uid',verifyToken,userCheck,async(req,res)=>{

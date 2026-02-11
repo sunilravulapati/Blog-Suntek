@@ -23,11 +23,11 @@ export const register = async (userObj) => {
 
 
 //authenticate function
-export const authenticate = async ({email,password,role}) => {
-    //check the email and the role
-    const user = await UserTypeModel.findOne({email,role})
+export const authenticate = async ({email,password,isActive}) => {
+    //check the email
+    const user = await UserTypeModel.findOne({email})
     if(!user){
-        const err = new Error("Invalid email or role")
+        const err = new Error("Invalid email")
         err.status = 401
         throw err
     }
@@ -41,8 +41,14 @@ export const authenticate = async ({email,password,role}) => {
         err.status = 401
         throw err
     }
+    //check if the user is active or not
+    if(user.isActive === false){
+        const err = new Error("You are blocked! Please contact the admin.")
+        err.status = 401
+        throw err
+    }
     //generate token
-    const token = jwt.sign({userId:user._id,email:user.email,userRole:user.role},
+    const token = jwt.sign({userId:user._id,email:user.email},
         process.env.JWT_SECRET, 
         {expiresIn:"1h"}
     )

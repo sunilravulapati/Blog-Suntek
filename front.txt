@@ -1,0 +1,14 @@
+client - refers to client side technologies or human or software
+end user - who uses the end program
+outcome of the frontend is the dynamic responsive(ability of the page to adjust the width based on various sizes of the screens) user interface
+in modern applications we need to make the pages responsive
+
+pure javascript without any libraries: vanilla javascript
+
+reactjs is a js library which helps in reducing the code size of the app if we had made it using plain html,css and js
+
+js uses UTF-8(unicode transformation format version 8 (8 bit))
+browser first contacts with the web server and gets the content that is to be deployed
+every element in html has some default style
+every browser contains an user agent which contains a separate style sheet(this varies from browser to browser)
+text styles,background styles

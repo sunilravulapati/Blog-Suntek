@@ -16,21 +16,22 @@ authorApp.post('/users',async (req,res) => {
     //role - make the backend/server to decide the role, dont allow the client to decide this........
     res.status(201).json({message:"user created",payload:newUserObj})
 })
-//authenticate - public
-authorApp.post('/authenticate',async (req,res) => {
-    //get user cred object
-    let userCred = req.body
-    //call authenticate function
-    let {token,user} = await authenticate(userCred)
-    //save the token as a httponly cookie
-    res.cookie("token",token,{
-        httpOnly:true,
-        secure:false,
-        sameSite:"lax"
-    })
-    //send the res
-    res.status(200).json({message:"author logged in!",payload:user})
-})
+
+// //authenticate - public
+// authorApp.post('/authenticate',async (req,res) => {
+//     //get user cred object
+//     let userCred = req.body
+//     //call authenticate function
+//     let {token,user} = await authenticate(userCred)
+//     //save the token as a httponly cookie
+//     res.cookie("token",token,{
+//         httpOnly:true,
+//         secure:false,
+//         sameSite:"lax"
+//     })
+//     //send the res
+//     res.status(200).json({message:"author logged in!",payload:user})
+// })
 
 //create article - protected
 authorApp.post('/articles',verifyToken,authorCheck,async(req,res)=>{

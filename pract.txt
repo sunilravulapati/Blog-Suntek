@@ -386,3 +386,8 @@ Status Codes:
     6. client now sends the req with token to what ever route(public)
         if the route is public then no issue
         if the route is protected then there will be a middleware which will check the tokens, then only the protected route is accessible
+->template literals
+    let a=10,b=20
+    we want to print it like this "a is 10 and b is 20"
+    for this we will use the backtick operator ( `` )
+    console.log(`a is ${a}, b is {b} and c is ${c}`)
