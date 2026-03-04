@@ -1,3 +1,7 @@
+### This is the separate git repository for the capstone project
+for previous week's see through this link: https://github.com/sunilravulapati/JavaScriptAssignments
+
+
 ### Backend Development
 
 1. create a git repo
