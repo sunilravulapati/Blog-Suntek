@@ -1,0 +1,31 @@
+###----------------------
+###ADMIN
+
+###login
+POST http://localhost:4000/common-api/login
+Content-Type: application/json
+
+{
+    "email":"admin@gmail.com",
+    "password":"admin",
+    "role":"ADMIN"
+}
+
+### read the articles
+GET http://localhost:4000/admin-api/articles/698ac00673730c8f326139a9
+
+###block users
+PUT http://localhost:4000/admin-api/block/698ac22bd1d858e24b8d68b1/adminId/698ac00673730c8f326139a9
+
+###unblock the users
+PUT http://localhost:4000/admin-api/unblock/698ac22bd1d858e24b8d68b1/adminId/698ac00673730c8f326139a9
+
+###change password!
+PUT http://localhost:4000/common-api/change-password
+Content-Type: application/json
+
+{
+    "email":"test@gmail.com",
+    "oldPassword":"test123",
+    "newPassword":"test12345"
+}

@@ -1,0 +1,45 @@
+###--------------------------------
+###users!
+###user register
+POST http://localhost:4000/user-api/users
+Content-Type: application/json
+
+{
+    "firstName":"test",
+    "lastName":"test",
+    "email":"test@gmail.com",
+    "password":"test123",
+    "profileImageURL":"https://example.com/avatars/user.png"
+}
+
+###user login
+POST http://localhost:4000/common-api/login
+Content-Type: application/json
+
+{
+    "email":"anurag@gmail.com",
+    "password":"anurag123",
+    "role":"USER"
+}
+
+### read the articles
+GET http://localhost:4000/user-api/users
+### add comments to the articles
+PUT http://localhost:4000/user-api/users
+Content-Type: application/json
+
+{
+    "userId" : "698966251010d5bea35fd037",
+    "articleId":"69897fc5daa4c278576dcd3f",
+    "comments":"very insightful article!wish more was there"
+}
+
+###change password!
+PUT http://localhost:4000/common-api/change-password
+Content-Type: application/json
+
+{
+    "email":"test@gmail.com",
+    "oldPassword":"test123",
+    "newPassword":"test12345"
+}

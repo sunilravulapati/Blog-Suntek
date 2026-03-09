@@ -5,6 +5,7 @@ function Register() {
 
   const onSubmit = (formObj) => {
     console.log(formObj)
+    //make the api request to user
   }
   return (
     <div>
