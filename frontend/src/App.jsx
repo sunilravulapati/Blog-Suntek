@@ -4,6 +4,12 @@ import AddArticle from './components/AddArticle'
 import { createBrowserRouter, RouterProvider } from "react-router"
 import RootLayout from './components/RootLayout'
 import Home from './components/Home'
+import UserDashboard from './components/UserDashboard'
+import AuthorDashboard from './components/AuthorDashboard'
+import AdminDashboard from './components/AdminDashboard'
+import ArticleList from './components/ArticleList'
+import Articles from './components/Articles'
+import { Toaster } from 'react-hot-toast'
 
 
 function App() {
@@ -19,10 +25,31 @@ function App() {
         {
           path: "/register",
           element: <Register />
-        }, {
+        },
+        {
           path: "/login",
           element: <Login />
         },
+        {
+          path: "/user-dashboard",
+          element: <UserDashboard />
+        },
+        {
+          path: "/author-dashboard",
+          element: <AuthorDashboard />
+        },
+        {
+          path: "/admin-dashboard",
+          element: <AdminDashboard />
+        },
+        {
+          path: '/article-list',
+          element: <ArticleList />
+        },
+        {
+          path: '/articles',
+          element: <Articles />
+        }
       ]
     }
   ])
@@ -34,7 +61,10 @@ function App() {
     //     <AddArticle />
     //   </div>
     // </div>
-    <RouterProvider router={routerObj} />
+    <>
+      <Toaster position="top-order" reverseOrder={false} />
+      <RouterProvider router={routerObj} />
+    </>
   )
 }
 

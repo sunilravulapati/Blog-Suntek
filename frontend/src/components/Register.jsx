@@ -1,19 +1,62 @@
 import { useForm } from 'react-hook-form'
+import { errorClass, formCard, inputClass, loadingClass, submitBtn } from '../styles/common.js'
+import { useState } from 'react'
+import {useNavigate} from 'react-router'
+import axios from 'axios'
 
 function Register() {
+  const navigate = useNavigate()
   const { register, handleSubmit, formState: { errors } } = useForm()
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
 
-  const onSubmit = (formObj) => {
+  const onSubmit = async (formObj) => {
+    setLoading(true)
     console.log(formObj)
-    //make the api request to user
+    //make the api request to user/author registration
+    try {
+      let {role,...user} = formObj
+      if (role === 'user') {
+        //make req to user-api
+        let resObj = await axios.post("http://localhost:4000/user-api/users",user)
+        let res = resObj.data;
+        if(res.status===201){
+          navigate('/login')
+        }
+      }
+      if (role === 'author') {
+        //make req to author-api
+        let resObj = await axios.post("http://localhost:4000/author-api/users",user)
+        let res = resObj.data;
+        if(res.status===201){
+          navigate('/login')
+        }
+      }
+    } catch (err) {
+      setError(err.response?.data?.error||"Registration Failed")
+
+    } finally {
+      setLoading(false)
+    }
   }
+  if(loading){
+    return <p className={loadingClass}></p>
+  }
+  // if(error){
+  //   return <p className={errorClass}>{error.message}</p>
+  // }
   return (
     <div>
       <div className='min-h-screen flex flex-col items-center justify-center'>
-        <h1 className='text-2xl text-center font-bold'>Register to Our App</h1>
-        <form onSubmit={handleSubmit(onSubmit)} className='p-10 rounded-lg max-w-lg shadow-lg'>
+        <form onSubmit={handleSubmit(onSubmit)} className={formCard}>
+          {/* title */}
+          <h1 className='text-2xl text-center font-bold'>Register to Our App</h1>
+          {/* error message */}
+          {
+            error&&<p className={errorClass}>{error}</p>
+          }
           {/* role */}
-          <div className='flex gap-6 justify-items-end items-center '>
+          <div className='flex gap-6 justify-items-end items-center mt-4 '>
             <h2 className='text-xl'>Select Your Role: </h2>
             <label>
               <input type="radio" value="user" {...register("role", { required: "Role is required" })} />
@@ -32,6 +75,7 @@ function Register() {
               {/* first name */}
               <input type="text" placeholder='enter your first name'
                 {...register("firstName", { required: "First Name is required" })}
+                // className={inputClass}
                 className='border rounded p-2 w-full'
               />
               {
@@ -42,6 +86,7 @@ function Register() {
               {/* first name */}
               <input type="text" placeholder='enter your last name'
                 {...register("lastName", { required: "Last Name is required" })}
+                // className={inputClass}
                 className='border rounded p-2 w-full'
               />
               {
@@ -52,6 +97,7 @@ function Register() {
           {/* email */}
           <input type="email" placeholder='enter your email'
             {...register("email", { required: "email is required(so that we can spam you! jk)" })}
+            //className={inputClass}
             className='border rounded w-full mt-5 p-2'
           />
           {
@@ -60,22 +106,25 @@ function Register() {
           {/* password */}
           <input type="password" placeholder='enter your password'
             {...register("password", { required: "password is required", minLength: { value: 6, message: "Minimum 6 characters" } })}
+            // className={inputClass}
             className='border rounded w-full mt-5 p-2'
           />
           {
             errors.password && (<p className='text-red-500'>{errors.password.message}</p>)
           }
           {/* profile image link upload */}
-          <input type="file" placeholder='place your profile pic image here'
+          <input type="text" placeholder='place your profile pic image here'
+            // className={inputClass}
             className='border rounded w-full mt-5 p-2'
-            {...register("profile", { required: "Profile Image is required" })}
+            defaultValue="https://example.com/avatars/user.png"
+            {...register("profileImageURL", { required: "Profile Image is required" })}
           />
           {
             errors.profile && (<p className='text-red-500'>{errors.profile.message}</p>)
           }
           {/* submit button */}
           <div className='flex justify-center'>
-            <button className='bg-blue-400 text-white rounded mt-5 px-7 py-2'>Register</button>
+            <button /*className='bg-blue-400 text-white rounded mt-5 px-7 py-2'*/ className={submitBtn}>Register</button>
           </div>
         </form>
       </div>

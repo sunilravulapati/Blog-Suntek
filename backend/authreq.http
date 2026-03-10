@@ -64,6 +64,13 @@ Content-Type: application/json
     "isArticleActive":false
 }
 
+###sir's version of soft delete
+PATCH http://localhost:4000/author-api/articles/6989750220ce5bf826ec4f7e/status
+Content-Type: application/json
+
+{ "isArticleActive": true }
+
+
 ###change password!
 PUT http://localhost:4000/common-api/change-password
 Content-Type: application/json

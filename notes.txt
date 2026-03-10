@@ -1,0 +1,35 @@
+making api request from the components
+two ways: 1.fetch
+            ex:get request- let res = await fetch("url",{method:"GET"}) // if we dont specify the 'method', then default is get
+                            let data = await res.json() // this data variable now contains the content, {message:"",payload:""},extraction is done manually by calling the json method
+                            if(data.status !== 200){//throw some error
+                                throw new Error("some error")
+                            }
+                            //if any request is made, the application gets to know whether that request was successful or not by checking the status, else we have to manually create some error handling logic
+            ex: post request - 
+                let resObj = await fetch("url",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify()})
+                //we need to manually set the header to content-type:application/json and we must convert the js object to json using JSON.stringify()
+          2. AXIOS
+                it is not an inbuilt feature in js, we have to install it and import it
+                ex: let resObj = await axios.get("") // on the axios we can specify what kind of request it is
+                    let res = resObj.data; // here there is no need to manually extract, the while the request is made only the data will get extracted
+                    //if there are any errors then the axios automatically sends the error object......
+                ex: let resObj = await axios.post("url",obj) // this object automatically gets the data object from the body
+                    let res = resObj.data
+                ->this is less verbose, simpler and has internal error handling
+                ->it contains err.response.<!--something-->
+
+to access protected routes, the user must login first and then tokens will be generated, now the token is sent login with the request
+in component routing only the current component will be present in the memory
+
+REACT FRAGMENT:
+an empty <></> which is used to group multiple elements, this is used when there is no styling for the parent component
+
+Toaster
+these are small components that are used to notify something....mainly improving the user experience
+->npm i react-hot-toaster
+->Add the toaster in the root component(i.e. App.jsx)
+    <Toaster position="top-order" reverseOrder={false}/>
+->to view that in a component
+    import {toast} from 'react-hot-toaster'
+    toast.success("LoggedIn successfully")
