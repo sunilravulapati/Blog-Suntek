@@ -53,7 +53,7 @@ function UserDashboard() {
         {/* display them in the form of grids */}
         {
           articles.map((articleObj) => (
-            <div key={articleObj.id} className={`${articleCardClass}`}>
+            <div key={articleObj.id} className={`${articleCardClass}`} onClick={() => navigate(`/article/${articleObj._id || articleObj.id}`, { state: { article: articleObj } })}>
               <h2 className={articleTitle}>{articleObj.title}</h2>
               <p className={articleBody}>{articleObj.content}</p>
               <p className='ml-30 text-xs'>Created At: {articleObj.createdAt}</p>

@@ -10,6 +10,7 @@ import AdminDashboard from './components/AdminDashboard'
 import ArticleList from './components/ArticleList'
 import Articles from './components/Articles'
 import { Toaster } from 'react-hot-toast'
+import ArticleByID from './components/ArticleById'
 
 
 function App() {
@@ -47,8 +48,8 @@ function App() {
           element: <ArticleList />
         },
         {
-          path: '/articles',
-          element: <Articles />
+          path: '/article/:id',
+          element: <ArticleByID />
         }
       ]
     }
