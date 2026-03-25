@@ -1,6 +1,16 @@
 import { useNavigate, useNavigation } from "react-router"
 import {toast} from 'react-hot-toast'
-import { articleBody, articleCardClass, articleGrid, articleTitle, errorClass, loadingClass } from "../styles/common";
+import { 
+  articleCardClass, 
+  articleGrid, 
+  articleTitle, 
+  errorClass, 
+  loadingClass, 
+  pageWrapper, 
+  pageTitleClass, 
+  articleExcerpt, 
+  tagClass,
+  section } from "../styles/common";
 import { useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
@@ -36,19 +46,40 @@ function ArticleList() {
     return <p className={errorClass}>{error}</p>
   }
   return (
-    <div className={articleGrid}>
-      {/* read the articles of all authors */}
-      {/* display them in the form of grids */}
-      {
-        articles.map((productObj)=>(
-          <div key={productObj.id} className={articleCardClass}>
-            <h2 className={articleTitle}>{productObj.title}</h2>
-            <p className={articleBody}>{productObj.content}</p>
+    <div className={pageWrapper}>
+      {/* Header Section */}
+      <header className={section}>
+        <span className={tagClass}>Featured Content</span>
+        <h1 className={pageTitleClass}>Articles</h1>
+      </header>
+
+      {/* Article Grid */}
+      <div className={articleGrid}>
+        {articles.length > 0 ? (
+          articles.map((articleObj) => (
+            <div key={articleObj.id || articleObj._id} className={articleCardClass}>
+              {/* Category Tag (Optional - using "General" as placeholder) */}
+              <span className={tagClass}>Insight</span>
+              
+              <h2 className={articleTitle}>{articleObj.title}</h2>
+              
+              {/* Using articleExcerpt for the grid view for better readability */}
+              <p className={articleExcerpt}>
+                {articleObj.content.substring(0, 100)}...
+              </p>
+              
+              {/* Optional: Add a "Read More" hint */}
+              <span className="text-[#0066cc] text-xs font-medium mt-auto">Read article →</span>
+            </div>
+          ))
+        ) : (
+          <div className="col-span-full py-20 text-center text-[#a1a1a6]">
+            No articles found.
           </div>
-        ))
-      }
+        )}
+      </div>
     </div>
-  )
+  );
 }
 
 export default ArticleList

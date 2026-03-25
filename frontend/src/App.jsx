@@ -63,7 +63,17 @@ function App() {
     //   </div>
     // </div>
     <>
-      <Toaster position="top-order" reverseOrder={false} />
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          style: {
+            fontFamily: "'DM Sans', sans-serif",
+            fontSize: "0.85rem",
+            borderRadius: "999px",
+            padding: "10px 18px",
+          },
+        }}
+      />
       <RouterProvider router={routerObj} />
     </>
   )

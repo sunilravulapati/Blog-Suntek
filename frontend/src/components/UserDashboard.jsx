@@ -1,34 +1,43 @@
 import { useAuth } from '../store/authStore'
 import { useNavigate } from 'react-router'
-import { primaryBtn } from '../styles/common'
 import { toast } from 'react-hot-toast'
-import { articleBody, articleCardClass, articleGrid, articleTitle, errorClass, loadingClass } from "../styles/common";
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from 'axios'
+import { 
+  articleBody, 
+  articleCardClass, 
+  articleGrid, 
+  articleTitle, 
+  errorClass, 
+  loadingClass,
+  pageWrapper,
+  pageTitleClass,
+  section,
+  primaryBtn,
+  tagClass,
+  articleExcerpt,
+  timestampClass
+} from "../styles/common";
+
 function UserDashboard() {
   const [articles, setArticles] = useState([])
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate()
-
   const logout = useAuth(state => state.logout)
 
   const onLogout = async () => {
-    //logout
     await logout()
-    //navigate to home/login
-    toast.success("LoggedOut Successfully!")
+    toast.success("Logged Out Successfully!")
     navigate('/login')
   }
 
   useEffect(() => {
-    setLoading(true);
     async function getArticles() {
+      setLoading(true);
       try {
         let res = await axios.get("http://localhost:4000/user-api/users", { withCredentials: true })
         setArticles(res.data.payload)
-        console.log(articles)
       } catch (err) {
         setError(err.message)
       } finally {
@@ -37,32 +46,49 @@ function UserDashboard() {
     }
     getArticles()
   }, [])
-  if (loading) {
-    return <p className={loadingClass}>Loading...</p>
-  } if (error) {
-    return <p className={errorClass}>{error}</p>
-  }
 
+  if (loading) return <div className={loadingClass}>Loading your feed...</div>;
+  if (error) return <div className={pageWrapper}><p className={errorClass}>{error}</p></div>;
 
   return (
-    <div>
-      <div className='text-center mt-3'>UserProfile</div>
-      <button onClick={onLogout} className={primaryBtn}>Logout</button>
-      <div className={`${articleGrid} gap-white`}>
-        {/* read the articles of all authors */}
-        {/* display them in the form of grids */}
-        {
-          articles.map((articleObj) => (
-            <div key={articleObj.id} className={`${articleCardClass}`} onClick={() => navigate(`/article/${articleObj._id || articleObj.id}`, { state: { article: articleObj } })}>
-              <h2 className={articleTitle}>{articleObj.title}</h2>
-              <p className={articleBody}>{articleObj.content}</p>
-              <p className='ml-30 text-xs'>Created At: {articleObj.createdAt}</p>
+    <div className={pageWrapper}>
+      {/* Dashboard Header */}
+      <header className={`${section} flex justify-between items-end`}>
+        <div>
+          <span className={tagClass}>User Dashboard</span>
+          <h1 className={pageTitleClass}>Your Feed</h1>
+        </div>
+        <button onClick={onLogout} className={primaryBtn}>
+          Log Out
+        </button>
+      </header>
+      {/* Article Grid */}
+      <div className={articleGrid}>
+        {articles.map((articleObj) => (
+          <div 
+            key={articleObj._id || articleObj.id} 
+            className={articleCardClass}
+            onClick={() => navigate(`/article/${articleObj._id || articleObj.id}`, { state: { article: articleObj } })}
+          >
+            <span className={tagClass}>Article</span>
+            <h2 className={articleTitle}>{articleObj.title}</h2>
+            {/* Using excerpt style for grid preview */}
+            <p className={articleExcerpt}>
+              {articleObj.content.substring(0, 120)}...
+            </p>
+            {/* Formatted Timestamp */}
+            <div className={`${timestampClass} mt-4`}>
+              <span>Created: {new Date(articleObj.createdAt).toLocaleDateString()}</span>
             </div>
-          ))
-        }
+          </div>
+        ))}
       </div>
+      {articles.length === 0 && (
+        <div className="text-center py-20 text-[#a1a1a6]">
+          No articles available at the moment.
+        </div>
+      )}
     </div>
   )
 }
-
 export default UserDashboard
