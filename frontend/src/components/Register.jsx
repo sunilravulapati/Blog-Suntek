@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { errorClass, formCard, inputClass, loadingClass, submitBtn } from '../styles/common.js'
-import { useState } from 'react'
-import {useNavigate} from 'react-router'
+import { useEffect,useState } from 'react'
+import { useNavigate } from 'react-router'
 import axios from 'axios'
 
 function Register() {
@@ -9,37 +9,54 @@ function Register() {
   const { register, handleSubmit, formState: { errors } } = useForm()
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [preview, setPreview] = useState(null)
+
+  //clean up - once the preview is shown then remove it from the browser's memory
+  useEffect(() => {
+    return () => {
+      if (preview) {
+        URL.revokeObjectURL(preview);
+      }
+    };
+  }, [preview]);
 
   const onSubmit = async (formObj) => {
     setLoading(true)
     console.log(formObj)
+    // Create form data object
+    const formData = new FormData();
+    //get user object
+    let { role, profileImageURL, ...userObj } = formObj;
+    //add all fields except profilePic to FormData object
+    Object.keys(userObj).forEach((key) => {
+      formData.append(key, userObj[key]);
+    });
+    // add profilePic to Formdata object
+    formData.append("profileImage", profileImageURL[0]);
     //make the api request to user/author registration
     try {
-      let {role,...user} = formObj
       if (role === 'user') {
         //make req to user-api
-        let resObj = await axios.post("http://localhost:4000/user-api/users",user)
-        let res = resObj.data;
-        if(res.status===201){
+        let resObj = await axios.post("http://localhost:4000/user-api/users", formData)
+        if (resObj.status === 201) {
           navigate('/login')
         }
       }
       if (role === 'author') {
         //make req to author-api
-        let resObj = await axios.post("http://localhost:4000/author-api/users",user)
-        let res = resObj.data;
-        if(res.status===201){
+        let resObj = await axios.post("http://localhost:4000/author-api/users", formData)
+        if (resObj.status === 201) {
           navigate('/login')
         }
       }
     } catch (err) {
-      setError(err.response?.data?.error||"Registration Failed")
+      setError(err.response?.data?.error || "Registration Failed")
 
     } finally {
       setLoading(false)
     }
   }
-  if(loading){
+  if (loading) {
     return <p className={loadingClass}></p>
   }
   // if(error){
@@ -53,7 +70,7 @@ function Register() {
           <h1 className='text-2xl text-center font-bold'>Register to Our App</h1>
           {/* error message */}
           {
-            error&&<p className={errorClass}>{error}</p>
+            error && <p className={errorClass}>{error}</p>
           }
           {/* role */}
           <div className='flex gap-6 justify-items-end items-center mt-4 '>
@@ -112,15 +129,47 @@ function Register() {
           {
             errors.password && (<p className='text-red-500'>{errors.password.message}</p>)
           }
-          {/* profile image link upload */}
-          <input type="text" placeholder='place your profile pic image here'
-            // className={inputClass}
+          {/* profile image upload */}
+          <input
+            type="file"
             className='border rounded w-full mt-5 p-2'
-            defaultValue="https://example.com/avatars/user.png"
-            {...register("profileImageURL", { required: "Profile Image is required" })}
+            accept="image/png, image/jpeg"
+            {...register("profileImageURL", {
+              required: "Profile Image is required",
+              onChange: (e) => {
+                const file = e.target.files[0];
+
+                if (file) {
+                  // type validation
+                  if (!["image/jpeg", "image/png"].includes(file.type)) {
+                    setError("Only JPG or PNG allowed");
+                    return;
+                  }
+
+                  // size validation
+                  if (file.size > 2 * 1024 * 1024) {
+                    setError("File size must be less than 2MB");
+                    return;
+                  }
+                  // preview
+                  const previewUrl = URL.createObjectURL(file);
+                  setPreview(previewUrl);
+                  setError(null);
+                }
+              }
+            })}
           />
+          {preview && (
+            <div className="mt-3 flex justify-center">
+              <img
+                src={preview}
+                alt="Preview"
+                className="w-24 h-24 object-cover rounded-full border"
+              />
+            </div>
+          )}
           {
-            errors.profile && (<p className='text-red-500'>{errors.profile.message}</p>)
+            errors.profileImageURL && (<p className='text-red-500'>{errors.profileImageURL.message}</p>)
           }
           {/* submit button */}
           <div className='flex justify-center'>

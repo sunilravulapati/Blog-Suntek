@@ -25,6 +25,8 @@ function UserDashboard() {
   const [error, setError] = useState(null);
   const navigate = useNavigate()
   const logout = useAuth(state => state.logout)
+  const currentUser = useAuth(state=>state.currentUser)
+  // console.log(currentUser)
 
   const onLogout = async () => {
     await logout()
@@ -55,7 +57,8 @@ function UserDashboard() {
       {/* Dashboard Header */}
       <header className={`${section} flex justify-between items-end`}>
         <div>
-          <span className={tagClass}>User Dashboard</span>
+          <img src={currentUser?.profileImageURL} className='w-14 rounded-full' alt='img'/>
+          <span className={tagClass}>{currentUser?.firstName}'s Dashboard</span>
           <h1 className={pageTitleClass}>Your Feed</h1>
         </div>
         <button onClick={onLogout} className={primaryBtn}>
@@ -63,11 +66,11 @@ function UserDashboard() {
         </button>
       </header>
       {/* Article Grid */}
-      <div className={articleGrid}>
+      <div className={`${articleGrid}`}>
         {articles.map((articleObj) => (
           <div 
             key={articleObj._id || articleObj.id} 
-            className={articleCardClass}
+            className={`${articleCardClass} gap-5`}
             onClick={() => navigate(`/article/${articleObj._id || articleObj.id}`, { state: { article: articleObj } })}
           >
             <span className={tagClass}>Article</span>

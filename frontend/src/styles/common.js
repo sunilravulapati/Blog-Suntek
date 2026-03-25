@@ -36,7 +36,7 @@ export const navLinkClass       = "text-[0.8rem] text-[#6e6e73] hover:text-[#1d1
 export const navLinkActiveClass = "text-[0.8rem] text-[#0066cc] font-medium"
 
 // ─── Article / Blog ───────────────────────────────────
-export const articleGrid        = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-[#e8e8ed] border border-[#e8e8ed] rounded-2xl overflow-hidden"
+export const articleGrid        = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 bg-[#e8e8ed] border border-[#e8e8ed] rounded-2xl overflow-hidden"
 export const articleCardClass   = "bg-[#f5f5f7] p-7 hover:bg-[#ebebf0] transition-colors duration-200 flex flex-col gap-2.5 cursor-pointer"
 export const articleTitle       = "text-base font-semibold text-[#1d1d1f] leading-snug tracking-tight"
 export const articleExcerpt     = "text-sm text-[#6e6e73] leading-relaxed"

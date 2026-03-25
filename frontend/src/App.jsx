@@ -11,6 +11,9 @@ import ArticleList from './components/ArticleList'
 import Articles from './components/Articles'
 import { Toaster } from 'react-hot-toast'
 import ArticleByID from './components/ArticleById'
+import EditArticle from './components/EditArticle'
+import ProtectedRoute from './components/ProtectedRoute'
+import Unauthorized from './components/Unauthorised'
 
 
 function App() {
@@ -33,15 +36,24 @@ function App() {
         },
         {
           path: "/user-dashboard",
-          element: <UserDashboard />
-        },
-        {
-          path: "/author-dashboard",
-          element: <AuthorDashboard />
+          element:
+            <ProtectedRoute allowedRoles={['USER']}>
+              <UserDashboard />
+            </ProtectedRoute>
         },
         {
           path: "/admin-dashboard",
-          element: <AdminDashboard />
+          element:
+            <ProtectedRoute allowedRoles={['ADMIN']}>
+              <AdminDashboard />
+            </ProtectedRoute>
+        },
+        {
+          path: "/author-dashboard",
+          element:
+            <ProtectedRoute allowedRoles={['AUTHOR']}>
+              <AuthorDashboard />
+            </ProtectedRoute>
         },
         {
           path: '/article-list',
@@ -50,6 +62,18 @@ function App() {
         {
           path: '/article/:id',
           element: <ArticleByID />
+        },
+        {
+          path: '/add-article',
+          element: <AddArticle />
+        },
+        {
+          path: '/edit-article',
+          element: <EditArticle />
+        },
+        {
+          path: '/unauth',
+          element: <Unauthorized />
         }
       ]
     }

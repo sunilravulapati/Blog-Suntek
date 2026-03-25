@@ -4,19 +4,47 @@ import { verifyToken } from '../middleware/verifyToken.js'
 import { userCheck } from '../middleware/userCheck.js'
 import { UserTypeModel } from '../models/UserModel.js'
 import { ArticleModel } from '../models/ArticleModel.js'
+import { uploadToCloudinary } from '../config/cloudinaryUpload.js'
+import { upload } from '../config/multer.js'
+import cloudinary from '../config/cloudinary.js'
 
 export const userApp = exp.Router()
 
 
 //register user
-userApp.post('/users', async (req, res) => {
-    //get the user obj from the req body
-    let userObj = req.body
-    //call the register function
-    const newUserObj = await register({ ...userObj, role: "USER" })
-    //role - make the backend/server to decide the role, dont allow the client to decide this........
-    res.status(201).json({ message: "user created", payload: newUserObj })
-})
+userApp.post(
+    "/users",
+    upload.single("profileImage"),
+    async (req, res, next) => {
+        let cloudinaryResult;
+        try {
+            let userObj = req.body;
+
+            //  Step 1: upload image to cloudinary from memoryStorage (if exists)
+            if (req.file) {
+                cloudinaryResult = await uploadToCloudinary(req.file.buffer);
+            }
+            // Step 2: call existing register()
+            const newUserObj = await register({
+                ...userObj,
+                role: "USER",
+                profileImageURL: cloudinaryResult?.secure_url,
+            });
+
+            res.status(201).json({
+                message: "user created",
+                payload: newUserObj,
+            });
+        } catch (err) {
+            // Step 3: rollback 
+            if (cloudinaryResult?.public_id) {
+                await cloudinary.uploader.destroy(cloudinaryResult.public_id);
+            }
+            next(err); // send to your error middleware
+        }
+
+    }
+);
 
 //authenticate/login user
 // userApp.post('/authenticate',async (req,res) => {

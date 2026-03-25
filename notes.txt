@@ -33,3 +33,70 @@ these are small components that are used to notify something....mainly improving
 ->to view that in a component
     import {toast} from 'react-hot-toaster'
     toast.success("LoggedIn successfully")
+
+
+25/3/26 - DAY-19, WEEK - 10
+to store binary data, we must use cdn (customer delivery network) servers - these servers organise the group of servers and has inbuilt caching techniques, content is delivered over the network (no need for conversion),fast performance
+->json supports only text data but not binary data
+-> FormData - this is a special browser API, this allows us to send both text and binary data and content type is set to multipart/formdata
+->if we use axios this content type will be picked automatically, but with fetch we must explicitly specify that
+->MULTER(extract multi media content / binary data from the req object) - this is a middleware which provides us the facility to extract this, it identifies the formData and takes it and we can use req.file so that apis can handle this 
+-> it is advised to not store binary data in the normal database as binary data is sometimes heavy and causes a lot of performance issues
+->uploading files to cloud services takes time we can do in two ways:
+    create a folder named uploads, this does two i/o operations - one to store until it is uploaded to cloud and another to delete - once it is uploaded to the cloud this leads to performance issues
+    store in Memory,but the Memory is limited in the servers - if the multiple users upload then it increases the load on the Memory - to handle this we must keep a file size limitations
+
+CLOUDINARY- a free service to store data, files
+90% of the code is just configuration of cloudinary and 10% is business logic
+
+FLOW:
+1. user selects the file
+2. frontend validates
+3. user submits the form
+4. backend validates again
+5. upload -> save
+
+=>every event handler that receives any event then we can call that function 
+
+Protecting Client Side routes
+People after getting to know about the route, they can easily access this, to prevent this we need to make the routes protected in both server-side and client-side
+
+in client side:
+    Create a component named 'ProtectedRoute.jsx'
+    in that add the business logic 
+
+<ArticleById/> - this is self closing mainly used to display this component which has the content
+
+<ArticleById>content</ArticleById> - we are wrapping the content inside the component, this content can be used using the 'children'
+
+ProtectedRoute.jsx
+import {useAuth} from '../store/authStore'
+import {Navigate} from 'react-router'
+
+function ProtectedRoute({children}){
+    let {loading, currentUser, isAuthenticated} = useAuth()
+
+    if(loading){
+        return <p>Loading....</p>
+    }
+    if(!isAuthenticated){
+        return <Navigate to='/login' replace/>
+    }
+    //CHECK ROLES
+    if(allowedRoles && !allowedRoles.includes(currentUser?.roles)){
+        return <Navigate to='/login' replace/>
+    }
+    return children
+}
+export default ProtectedRoute
+
+=> useNavigate and Navigate - both of them are for routing only but Navigate returns a component
+=> replace 
+=> redirectTo
+
+
+in App.jsx
+element:
+    <ProtectedRoute allowedRoles={['USER']}>
+        <UserDashboard/>
+    </ProtectedRoute>

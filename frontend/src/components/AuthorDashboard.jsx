@@ -51,7 +51,7 @@ function AuthorDashboard() {
     getArticles();
   }, [user]);
 
-  if (loading) return <div className={loadingClass}>Loading your portfolio...</div>;
+  if (loading) return <div className={loadingClass}>Loading...</div>;
   if (error) return <div className={pageWrapper}><p className={errorClass}>{error}</p></div>;
 
   return (
