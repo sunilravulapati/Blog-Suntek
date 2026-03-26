@@ -58,3 +58,8 @@ commonApp.put('/change-password', verifyToken, async (req, res) => {
     //send the res
     res.status(200).json({ message: "password is updated!" })
 })
+
+//handling page refresh
+commonApp.get('/check-auth', verifyToken('USER', 'AUTHOR', 'ADMIN'), async (req, res) => {
+    res.status(200).json({ message: "authenticated", payload: req.user })
+})

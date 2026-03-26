@@ -39,6 +39,7 @@ function ArticleByID() {
           { withCredentials: true }
         );
         setArticle(res.data.payload);
+        console.log(res.data.payload)
       } catch (err) {
         setError(err.message);
       } finally {
@@ -74,7 +75,7 @@ function ArticleByID() {
         <h1 className={`${pageTitleClass} mb-6`}>{article.title}</h1>
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-[#e8e8ed] flex items-center justify-center text-[10px] font-bold">
-            {article.author?.name?.charAt(0) || "A"}
+            {article.author?.firstName?.charAt(0) || "A"}
           </div>
           <p className="text-sm font-medium text-[#1d1d1f]">
             {article.author?.firstName || "Anonymous Author"}

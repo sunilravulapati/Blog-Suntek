@@ -46,7 +46,7 @@ function ProtectedRoute({ children, allowedRoles }) {
   if (allowedRoles && !allowedRoles.includes(currentUser?.role)) {
     console.log("first");
     //redirect to Login
-    return <Navigate to="/unauthorized" replace state={{ redirectTo: "/" }} />;
+    return <Navigate to="/unauth" replace state={{ redirectTo: "/" }} />;
   }
 
   return children;

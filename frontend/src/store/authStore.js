@@ -58,6 +58,30 @@ export const useAuth = create(
             error: err.response?.data?.error || "Logout failed",
           })
         }
+      },
+
+      checkAuth: async () => {
+        try {
+          set({ loading: true, error: null })
+
+          let resObj = await axios.get('http://localhost:4000/common-api/check-auth', { withCredentials: true })
+          // console.log(resObj.data.payload)
+
+          set({
+            loading: false,
+            isAuthenticated: true,
+            currentUser: resObj.data.payload
+          })
+
+        }
+        catch (err) {
+          set({
+            loading: false,
+            isAuthenticated: false,
+            currentUser: null,
+            error: err.response?.data?.error,
+          })
+        }
       }
     }),
     {

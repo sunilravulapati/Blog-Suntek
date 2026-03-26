@@ -46,7 +46,7 @@ export const authenticate = async ({ email, password, isActive }) => {
         throw err
     }
     //generate token
-    const token = jwt.sign({ userId: user._id, email: user.email, role: user.role },
+    const token = jwt.sign({ userId: user._id, email: user.email, role: user.role,firstName:user.firstName,profileImageURL:user.profileImageURL },
         process.env.JWT_SECRET,
         { expiresIn: "1h" }
     )
