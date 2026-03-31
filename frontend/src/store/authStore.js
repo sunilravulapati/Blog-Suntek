@@ -15,23 +15,27 @@ export const useAuth = create(
         try {
           set({ loading: true, error: null })
 
-          let res = await axios.post(
-            "http://localhost:4000/common-api/login",
-            userCredObj,
-            { withCredentials: true }
-          )
+          // Route to the correct login endpoint based on role
+          const endpoint =
+            role === 'ADMIN'
+              ? 'http://localhost:4000/admin-api/authenticate'
+              : 'http://localhost:4000/common-api/login'
+
+          const res = await axios.post(endpoint, userCredObj, {
+            withCredentials: true,
+          })
 
           set({
             loading: false,
             isAuthenticated: true,
-            currentUser: res.data.payload
+            currentUser: res.data.payload,
           })
         } catch (err) {
           set({
             loading: false,
             isAuthenticated: false,
             currentUser: null,
-            error: err.response?.data?.error || "Login failed",
+            error: err.response?.data?.error || 'Login failed',
           })
         }
       },
@@ -40,22 +44,21 @@ export const useAuth = create(
         try {
           set({ loading: true, error: null })
 
-          await axios.get(
-            "http://localhost:4000/common-api/logout",
-            { withCredentials: true }
-          )
+          await axios.get('http://localhost:4000/common-api/logout', {
+            withCredentials: true,
+          })
 
           set({
             loading: false,
             isAuthenticated: false,
-            currentUser: null
+            currentUser: null,
           })
         } catch (err) {
           set({
             loading: false,
             isAuthenticated: false,
             currentUser: null,
-            error: err.response?.data?.error || "Logout failed",
+            error: err.response?.data?.error || 'Logout failed',
           })
         }
       },
@@ -64,17 +67,17 @@ export const useAuth = create(
         try {
           set({ loading: true, error: null })
 
-          let resObj = await axios.get('http://localhost:4000/common-api/check-auth', { withCredentials: true })
-          // console.log(resObj.data.payload)
+          const resObj = await axios.get(
+            'http://localhost:4000/common-api/check-auth',
+            { withCredentials: true }
+          )
 
           set({
             loading: false,
             isAuthenticated: true,
-            currentUser: resObj.data.payload
+            currentUser: resObj.data.payload,
           })
-
-        }
-        catch (err) {
+        } catch (err) {
           set({
             loading: false,
             isAuthenticated: false,
@@ -82,10 +85,12 @@ export const useAuth = create(
             error: err.response?.data?.error,
           })
         }
-      }
+      },
+
+      setUser: (user) => set({ currentUser: user, isAuthenticated: true }),
     }),
     {
-      name: "auth-storage", // 🔥 key in localStorage
+      name: 'auth-storage',
     }
   )
 )

@@ -1,94 +1,96 @@
 import { useForm } from 'react-hook-form'
 import { useAuth } from '../store/authStore'
 import { useEffect } from 'react'
-import { useNavigate } from 'react-router'
-import { loadingClass, errorClass } from '../styles/common'
+import { useNavigate, NavLink } from 'react-router'
+import { loadingClass, errorClass, inputClass, labelClass, formGroup } from '../styles/common'
 import { toast } from 'react-hot-toast'
 
 function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm()
   const login = useAuth(state => state.login)
   const isAuthenticated = useAuth(state => state.isAuthenticated)
-  // console.log(isAuthenticated)
   const currentUser = useAuth(state => state.currentUser)
   const loading = useAuth(state => state.loading)
   const error = useAuth(state => state.error)
-
   const navigate = useNavigate()
 
   const onUserLogin = async (userCredObj) => {
     await login(userCredObj)
-    // console.log(isAuthenticated) dont place it here as the login funciton is in await so before that is done, this statement will be printed
   }
+
   useEffect(() => {
     if (isAuthenticated) {
-      if (currentUser.role === 'USER') {
-        toast.success("LoggedIn successfully")
-        navigate('/user-dashboard')
-      }
-      if (currentUser.role === 'AUTHOR') {
-        toast.success("LoggedIn successfully")
-        navigate('/author-dashboard')
-      }
-      if (currentUser.role === 'ADMIN') {
-        toast.success("LoggedIn successfully")
-        navigate('/admin-dashboard')
-      }
+      toast.success("Logged in successfully")
+      if (currentUser.role === 'USER') navigate('/user-dashboard')
+      if (currentUser.role === 'AUTHOR') navigate('/author-dashboard')
+      if (currentUser.role === 'ADMIN') navigate('/admin-dashboard')
     }
   }, [isAuthenticated, currentUser])
-  if (loading) {
-    return <p className={loadingClass}>Loading...</p>
-  }
-  return (
-    <div>
-      <div className='min-h-screen flex flex-col items-center justify-center sm:*'>
-        <form onSubmit={handleSubmit(onUserLogin)} className='p-10 rounded-lg max-w-lg shadow-lg'>
-          <h1 className='text-2xl text-center font-bold'>Login</h1>
-          {/* role */}
-          {/* <div className='flex gap-6 justify-items-end items-center '>
-            <h2 className='text-xl'>Select Your Role: </h2>
-            <label>
-              <input type="radio" value="user" {...register("role", { required: "Role is required" })} />
-              <span className="ml-2">User</span>
-            </label>
-            <label>
-              <input type="radio" value="author" {...register("role", { required: "Role is required" })} />
-              <span className="ml-2">Author</span>
-            </label>
-            <label>
-              <input type="radio" value="admin" {...register("role", { required: "Role is required" })} />
-              <span className="ml-2">Admin</span>
-            </label>
-          </div> */}
-          {/* {
-            errors.role && (<p className='text-red-500 text-sm'>{errors.role.message}</p>)
-          } */}
 
-          {/* error message */}
-          {
-            error && <p className={errorClass}>{error}</p>
-          }
-          {/* email */}
-          <input type="email" placeholder='enter your email'
-            {...register("email", { required: "email is required(so that we can spam you! jk)" })}
-            className='border rounded w-full mt-5 p-2'
-          />
-          {
-            errors.email && (<p className='text-red-500'>{errors.email.message}</p>)
-          }
-          {/* password */}
-          <input type="password" placeholder='enter your password'
-            {...register("password", { required: "password is required", minLength: { value: 6, message: "Minimum 6 characters" } })}
-            className='border rounded w-full mt-5 p-2'
-          />
-          {
-            errors.password && (<p className='text-red-500'>{errors.password.message}</p>)
-          }
-          {/* submit button */}
-          <div className='flex justify-center'>
-            <button className='bg-blue-400 text-white rounded mt-5 px-7 py-2'>Login</button>
-          </div>
-        </form>
+  if (loading) return <p className={loadingClass}>Signing you in…</p>
+
+  return (
+    <div className="min-h-screen bg-white flex items-center justify-center px-4">
+      <div className="w-full max-w-sm">
+
+        {/* Brand mark */}
+        <div className="text-center mb-8">
+          <span className="text-2xl font-bold text-[#1d1d1f] tracking-tight">BlogApp</span>
+          <p className="text-sm text-[#6e6e73] mt-1">Sign in to continue</p>
+        </div>
+
+        {/* Card */}
+        <div className="bg-[#f5f5f7] rounded-2xl p-8">
+          <h1 className="text-xl font-bold text-[#1d1d1f] tracking-tight mb-6">Welcome back</h1>
+
+          {error && (
+            <div className={`${errorClass} mb-5`}>{error}</div>
+          )}
+
+          <form onSubmit={handleSubmit(onUserLogin)} className="flex flex-col gap-4">
+            {/* Email */}
+            <div className={formGroup}>
+              <label className={labelClass}>Email</label>
+              <input
+                type="email"
+                placeholder="you@example.com"
+                className={inputClass}
+                {...register("email", { required: "Email is required" })}
+              />
+              {errors.email && <p className="text-[#cc2f26] text-xs mt-1">{errors.email.message}</p>}
+            </div>
+
+            {/* Password */}
+            <div className={formGroup}>
+              <label className={labelClass}>Password</label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                className={inputClass}
+                {...register("password", {
+                  required: "Password is required",
+                  minLength: { value: 6, message: "Minimum 6 characters" }
+                })}
+              />
+              {errors.password && <p className="text-[#cc2f26] text-xs mt-1">{errors.password.message}</p>}
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-[#0066cc] text-white font-semibold py-2.5 rounded-full hover:bg-[#004499] transition-colors cursor-pointer mt-1 text-sm tracking-tight"
+            >
+              Sign In
+            </button>
+          </form>
+        </div>
+
+        {/* Footer */}
+        <p className="text-center text-sm text-[#6e6e73] mt-5">
+          Don't have an account?{' '}
+          <NavLink to="/register" className="text-[#0066cc] hover:text-[#004499] font-medium transition-colors">
+            Register
+          </NavLink>
+        </p>
       </div>
     </div>
   )

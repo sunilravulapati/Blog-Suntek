@@ -53,31 +53,38 @@ authorApp.get('/article', verifyToken("AUTHOR"), async (req, res) => {
     //read the articles
     let articlesList = await ArticleModel.find({
         author: new Types.ObjectId(authorId),
-        isArticleActive: true
-    }).populate("author", "firstName lastName email");
+    })
+    .populate("comments.user","email firstName")
+        .populate("author", "firstName lastName email");
     //send res
     res.status(200).json({ message: "articles: ", payload: articlesList })
 })
 
 //edit article - protected, better to use patch
-authorApp.put('/articles/:articleId', verifyToken("AUTHOR"), async (req, res) => {
-    //get the modified article
-    let aid = req.params.articleId
-    let modifiedArticle = req.body
-    //find the article
-    let foundArticle = await ArticleModel.findOne({ _id: aid, author: modifiedArticle.author })
-    if (!foundArticle) {
-        return res.status(401).json({ message: "article not found!" })
+authorApp.put("/articles", verifyToken("AUTHOR"), async (req, res) => {
+    console.log(req.body);
+    let author = req.user.userId;
+    //get modified article from req
+    let { articleId, title, category, content } = req.body;
+    console.log(articleId, author);
+    //find article
+    let articleOfDB = await ArticleModel.findOne({ _id: articleId, author: author });
+    console.log(articleOfDB);
+    if (!articleOfDB) {
+        return res.status(401).json({ message: "Article not found" });
     }
+
     //update the article
-    let newArticle = await ArticleModel.findByIdAndUpdate(
-        aid,
-        { $set: { ...modifiedArticle } },
-        { new: true }
-    )
-    //send the res
-    res.status(201).json({ message: "article updated successfully!", payload: newArticle })
-})
+    let updatedArticle = await ArticleModel.findByIdAndUpdate(
+        articleId,
+        {
+            $set: { title, category, content },
+        },
+        { new: true },
+    );
+    //send res(updated article)
+    res.status(200).json({ message: "article updated", payload: updatedArticle });
+});
 
 // authorApp.delete('/articles/:articleId/author/:aid',verifyToken,authorCheck,async (req,res) => {
 //     //get the article id from the url
@@ -161,6 +168,6 @@ authorApp.patch("/articles/:id/status", verifyToken("AUTHOR"), async (req, res) 
     //send res
     res.status(200).json({
         message: `Article ${isArticleActive ? "restored" : "deleted"} successfully`,
-        article,
+        payload: article
     });
 });

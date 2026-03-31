@@ -8,12 +8,12 @@ import UserDashboard from './components/UserDashboard'
 import AuthorDashboard from './components/AuthorDashboard'
 import AdminDashboard from './components/AdminDashboard'
 import ArticleList from './components/ArticleList'
-import Articles from './components/Articles'
 import { Toaster } from 'react-hot-toast'
-import ArticleByID from './components/ArticleById'
+import ArticleById from './components/ArticleById'
 import EditArticle from './components/EditArticle'
 import ProtectedRoute from './components/ProtectedRoute'
 import Unauthorized from './components/Unauthorised'
+import ErrorBoundary from './components/ErrorBoundary'
 
 
 function App() {
@@ -21,6 +21,7 @@ function App() {
     {
       path: "/",
       element: <RootLayout />,
+      errorElement:<ErrorBoundary/>,
       children: [
         {
           path: "",
@@ -61,10 +62,10 @@ function App() {
         },
         {
           path: '/article/:id',
-          element: <ArticleByID />
+          element: <ArticleById />
         },
         {
-          path: '/add-article',
+          path: '/articles',
           element: <AddArticle />
         },
         {

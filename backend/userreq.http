@@ -5,11 +5,12 @@ POST http://localhost:4000/user-api/users
 Content-Type: application/json
 
 {
-    "firstName":"test",
+    "firstName":"admin",
     "lastName":"test",
-    "email":"test@gmail.com",
-    "password":"test123",
-    "profileImageURL":"https://example.com/avatars/user.png"
+    "email":"admin@mail.com",
+    "password":"admin123",
+    "profileImageURL":"https://example.com/avatars/user.png",
+    "role":"ADMIN"
 }
 
 ###user login

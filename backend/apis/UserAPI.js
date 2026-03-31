@@ -67,7 +67,9 @@ userApp.get('/users', verifyToken("USER"), async (req, res) => {
     // //get the user id from the body
     // let uid = req.params.uid
     //get the articles
-    let articlesList = await ArticleModel.find({ isArticleActive: true }).populate("comments.user", "firstName lastName")
+    let articlesList = await ArticleModel.find({ isArticleActive: true })
+                            .populate("author", "firstName lastName")
+                            .populate("comments.user", "email firstName")
     //send the res
     res.status(200).json({ message: "articles:", payload: articlesList })
 })
@@ -85,7 +87,7 @@ userApp.put('/users', verifyToken("USER"), async (req, res) => {
         { _id: articleId, isArticleActive: true },
         { $push: { comments: { user: userId, comment: comments } } },
         { new: true, runValidators: true }
-    ).populate("comments.user", "firstName")
+    ).populate("comments.user", "email firstName")
     //if article not found
     if (!updatedArticle) {
         return res.status(404).json({ message: "article not found" })

@@ -12,7 +12,7 @@ function RootLayout() {
 
   useEffect(()=>{
     checkAuth()
-    console.log(user)
+    // console.log(user)
   },[])
 
   if(loading){

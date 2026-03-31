@@ -6,8 +6,8 @@ POST http://localhost:4000/common-api/login
 Content-Type: application/json
 
 {
-    "email":"admin@gmail.com",
-    "password":"admin",
+    "email":"admin@mail.com",
+    "password":"admin123",
     "role":"ADMIN"
 }
 
@@ -29,3 +29,5 @@ Content-Type: application/json
     "oldPassword":"test123",
     "newPassword":"test12345"
 }
+###Logout
+GET http://localhost:4000/common-api/logout

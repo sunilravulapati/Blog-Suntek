@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JPMC Coding Round — Exam Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #020408;
+    --surface: #050a10;
+    --card: #070d15;
+    --border: #0f2a3a;
+    --border-glow: #00e5ff33;
+    --accent: #00e5ff;
+    --accent-dim: #00b4cc;
+    --accent2: #bf00ff;
+    --accent3: #ff6b00;
+    --green: #00ff88;
+    --red: #ff003c;
+    --yellow: #ffe600;
+    --text: #c8e8f0;
+    --muted: #3a6070;
+    --code-bg: #020810;
+    --scanline: rgba(0,229,255,0.025);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    font-size: 15px;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% 10%, rgba(0,229,255,0.04) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 90%, rgba(191,0,255,0.04) 0%, transparent 60%),
+      linear-gradient(rgba(0,229,255,0.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.018) 1px, transparent 1px);
+    background-size: auto, auto, 48px 48px, 48px 48px;
+  }
+  body::after {
+    content: '';
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 3px,
+      var(--scanline) 3px,
+      var(--scanline) 4px
+    );
+    animation: scanroll 8s linear infinite;
+  }
+  @keyframes scanroll {
+    from { background-position: 0 0; }
+    to { background-position: 0 400px; }
+  }
+
+  .container { max-width: 1120px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 18px 0;
+    position: sticky; top: 0;
+    background: rgba(2,4,8,0.96);
+    backdrop-filter: blur(20px);
+    z-index: 100;
+    box-shadow: 0 1px 0 var(--border-glow), 0 8px 32px rgba(0,0,0,0.8);
+  }
+  header .inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+
+  .logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 1rem; font-weight: 900; letter-spacing: 0.18em;
+    color: var(--accent);
+    text-transform: uppercase;
+    text-shadow: 0 0 20px rgba(0,229,255,0.6), 0 0 40px rgba(0,229,255,0.2);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .logo::before {
+    content: '▸';
+    color: var(--accent2);
+    text-shadow: 0 0 10px var(--accent2);
+    animation: blink 1.4s step-end infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+  .logo span { color: rgba(200,232,240,0.7); font-weight: 400; }
+
+  .badge {
+    font-family: 'Share Tech Mono', monospace;
+    background: rgba(255,0,60,0.08);
+    border: 1px solid rgba(255,0,60,0.5);
+    color: var(--red);
+    padding: 5px 14px;
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.15em;
+    text-transform: uppercase;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    text-shadow: 0 0 8px var(--red);
+    animation: urgentpulse 1.8s ease-in-out infinite;
+  }
+  @keyframes urgentpulse {
+    0%,100% { box-shadow: 0 0 8px rgba(255,0,60,0.3); }
+    50% { box-shadow: 0 0 20px rgba(255,0,60,0.6), 0 0 40px rgba(255,0,60,0.2); }
+  }
+
+  .nav-tabs { display: flex; gap: 3px; padding: 16px 0 0; flex-wrap: wrap; }
+  .tab-btn {
+    font-family: 'Share Tech Mono', monospace;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.7rem; font-weight: 400; letter-spacing: 0.1em;
+    padding: 6px 14px; cursor: pointer;
+    transition: all 0.15s; text-transform: uppercase;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    position: relative;
+  }
+  .tab-btn:hover {
+    border-color: var(--accent-dim); color: var(--accent);
+    background: rgba(0,229,255,0.04);
+    box-shadow: inset 0 0 12px rgba(0,229,255,0.05), 0 0 8px rgba(0,229,255,0.15);
+  }
+  .tab-btn.active {
+    background: var(--accent); border-color: var(--accent);
+    color: #000; font-weight: 700;
+    box-shadow: 0 0 16px rgba(0,229,255,0.5), 0 0 32px rgba(0,229,255,0.2);
+    text-shadow: none;
+  }
+
+  .section { display: none; padding: 36px 0 80px; }
+  .section.active { display: block; animation: cyberFade 0.25s ease; }
+  @keyframes cyberFade {
+    from { opacity:0; transform: translateY(6px) skewX(-0.5deg); }
+    to { opacity:1; transform: none; }
+  }
+
+  .section-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.5rem; font-weight: 700; margin-bottom: 4px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--text);
+  }
+  .section-title span {
+    color: var(--accent);
+    text-shadow: 0 0 20px rgba(0,229,255,0.5);
+    display: inline-block;
+    transition: text-shadow 0.1s;
+  }
+  .section-title:hover span { animation: glitch 0.4s steps(2) 1; }
+  @keyframes glitch {
+    0%   { transform: translate(0); text-shadow: 0 0 20px rgba(0,229,255,0.5); }
+    20%  { transform: translate(-2px,1px); text-shadow: -2px 0 var(--red), 2px 0 var(--accent); }
+    40%  { transform: translate(2px,-1px); text-shadow: 2px 0 var(--accent2), -2px 0 var(--green); }
+    60%  { transform: translate(-1px,0); text-shadow: 0 0 20px rgba(0,229,255,0.8); }
+    80%  { transform: translate(1px,1px); text-shadow: 1px 0 var(--red), -1px 0 var(--accent); }
+    100% { transform: translate(0); text-shadow: 0 0 20px rgba(0,229,255,0.5); }
+  }
+  .section-sub {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--muted); font-size: 0.78rem; margin-bottom: 28px;
+    letter-spacing: 0.05em;
+  }
+  .section-sub::before { content: '// '; color: var(--accent2); opacity: 0.6; }
+
+  .cards { display: grid; gap: 14px; }
+  .cards-2 { grid-template-columns: repeat(auto-fill, minmax(480px, 1fr)); }
+  .cards-3 { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 20px 22px;
+    position: relative;
+    transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+  }
+  .card::before {
+    content: '';
+    position: absolute; top: 0; right: 0;
+    width: 14px; height: 14px;
+    background: var(--border);
+    clip-path: polygon(0 0, 100% 100%, 100% 0);
+    transition: background 0.2s;
+  }
+  .card::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0;
+    width: 10px; height: 10px;
+    background: var(--border);
+    clip-path: polygon(0 0, 0 100%, 100% 100%);
+    transition: background 0.2s;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 1px rgba(0,229,255,0.15), 0 8px 32px rgba(0,229,255,0.08), inset 0 0 24px rgba(0,229,255,0.02);
+  }
+  .card:hover::before { background: var(--accent); }
+  .card:hover::after { background: rgba(0,229,255,0.3); }
+
+  .card-header {
+    display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 12px; margin-bottom: 12px;
+  }
+  .card-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.98rem; font-weight: 700; line-height: 1.3;
+    color: var(--text); letter-spacing: 0.03em;
+  }
+
+  .tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.6rem; font-weight: 400; letter-spacing: 0.12em;
+    padding: 3px 8px; white-space: nowrap; text-transform: uppercase;
+    clip-path: polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%);
+  }
+  .tag-blue { background: rgba(0,229,255,0.08); color: var(--accent); border: 1px solid rgba(0,229,255,0.3); text-shadow: 0 0 6px rgba(0,229,255,0.5); }
+  .tag-purple { background: rgba(191,0,255,0.1); color: #d066ff; border: 1px solid rgba(191,0,255,0.35); text-shadow: 0 0 6px rgba(191,0,255,0.4); }
+  .tag-amber { background: rgba(255,107,0,0.08); color: var(--accent3); border: 1px solid rgba(255,107,0,0.3); text-shadow: 0 0 6px rgba(255,107,0,0.4); }
+  .tag-green { background: rgba(0,255,136,0.07); color: var(--green); border: 1px solid rgba(0,255,136,0.25); text-shadow: 0 0 6px rgba(0,255,136,0.4); }
+  .tag-red { background: rgba(255,0,60,0.08); color: var(--red); border: 1px solid rgba(255,0,60,0.3); text-shadow: 0 0 6px rgba(255,0,60,0.4); }
+
+  .card p { color: #6a9ab0; font-size: 0.9rem; line-height: 1.7; margin-bottom: 10px; }
+  .card p:last-child { margin-bottom: 0; }
+  .card code { font-family: 'Share Tech Mono', monospace; font-size: 0.82em; color: var(--accent); background: rgba(0,229,255,0.07); padding: 1px 5px; }
+
+  .insight {
+    background: rgba(0,229,255,0.04);
+    border-left: 2px solid var(--accent);
+    padding: 10px 14px; margin: 12px 0;
+    font-size: 0.86rem; color: #7abfd4; line-height: 1.65;
+    position: relative;
+  }
+  .insight::before {
+    content: 'SYS';
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.55rem; color: var(--accent); letter-spacing: 0.15em;
+    position: absolute; top: -8px; left: 10px;
+    background: var(--card); padding: 0 4px;
+    text-shadow: 0 0 8px var(--accent);
+  }
+  .insight strong { color: var(--accent); font-weight: 600; }
+
+  .warn {
+    background: rgba(255,107,0,0.05);
+    border-left: 2px solid var(--accent3);
+    padding: 10px 14px; margin: 12px 0;
+    font-size: 0.86rem; color: #c07030; line-height: 1.65;
+    position: relative;
+  }
+  .warn::before {
+    content: 'WARN';
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.55rem; color: var(--accent3); letter-spacing: 0.15em;
+    position: absolute; top: -8px; left: 10px;
+    background: var(--card); padding: 0 4px;
+    text-shadow: 0 0 8px var(--accent3);
+  }
+
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid rgba(0,229,255,0.1);
+    border-top: 2px solid rgba(0,229,255,0.2);
+    padding: 14px 16px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.74rem; line-height: 1.85;
+    color: #8bbdcc; overflow-x: auto; margin: 14px 0;
+    white-space: pre;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.4), 0 0 0 1px rgba(0,229,255,0.05);
+    position: relative;
+  }
+  .code-block::before {
+    content: '> exec';
+    display: block;
+    font-size: 0.6rem; color: rgba(0,229,255,0.3); letter-spacing: 0.2em;
+    margin-bottom: 8px; border-bottom: 1px solid rgba(0,229,255,0.07); padding-bottom: 6px;
+  }
+  .kw { color: #ff55a3; text-shadow: 0 0 4px rgba(255,85,163,0.3); }
+  .fn { color: #00ff88; text-shadow: 0 0 4px rgba(0,255,136,0.25); }
+  .cm { color: #2a5060; font-style: italic; }
+  .num { color: #bf00ff; text-shadow: 0 0 4px rgba(191,0,255,0.3); }
+  .str { color: #ffe600; text-shadow: 0 0 4px rgba(255,230,0,0.25); }
+  .type { color: #00ccff; text-shadow: 0 0 4px rgba(0,200,255,0.3); }
+
+  .complexity { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .cx { font-family: 'Share Tech Mono', monospace; font-size: 0.68rem; padding: 3px 10px; font-weight: 400; letter-spacing: 0.06em; clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%); }
+  .cx-time { background: rgba(0,255,136,0.08); color: var(--green); border: 1px solid rgba(0,255,136,0.25); text-shadow: 0 0 6px rgba(0,255,136,0.3); }
+  .cx-space { background: rgba(191,0,255,0.08); color: #d066ff; border: 1px solid rgba(191,0,255,0.25); text-shadow: 0 0 6px rgba(191,0,255,0.3); }
+
+  .steps { list-style: none; margin: 10px 0; }
+  .steps li {
+    display: flex; gap: 10px; align-items: flex-start;
+    font-size: 0.88rem; color: #6a9ab0;
+    margin-bottom: 8px; line-height: 1.6;
+    font-family: 'Rajdhani', sans-serif;
+  }
+  .steps li::before {
+    content: attr(data-n);
+    background: transparent; color: var(--accent);
+    border: 1px solid rgba(0,229,255,0.4);
+    min-width: 20px; height: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.6rem; flex-shrink: 0; margin-top: 1px;
+    text-shadow: 0 0 6px var(--accent);
+    box-shadow: 0 0 6px rgba(0,229,255,0.1);
+  }
+
+  .star-card {
+    background: linear-gradient(135deg, rgba(255,107,0,0.05) 0%, rgba(255,0,60,0.05) 100%);
+    border: 1px solid rgba(255,107,0,0.35);
+    padding: 24px; margin-bottom: 20px;
+    position: relative;
+    clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+    box-shadow: 0 0 30px rgba(255,107,0,0.06), inset 0 0 40px rgba(255,107,0,0.02);
+  }
+  .star-card::before {
+    content: 'PRIORITY_ACCESS';
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.55rem; letter-spacing: 0.2em; color: var(--accent3);
+    position: absolute; top: -9px; left: 20px;
+    background: var(--bg); padding: 0 6px;
+    text-shadow: 0 0 8px var(--accent3);
+  }
+  .star-card .star-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.95rem; font-weight: 700;
+    color: var(--accent3); display: flex; align-items: center; gap: 8px;
+    margin-bottom: 14px; letter-spacing: 0.05em;
+    text-shadow: 0 0 12px rgba(255,107,0,0.4);
+  }
+
+  .checklist { list-style: none; }
+  .checklist li {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.88rem; padding: 8px 4px;
+    border-bottom: 1px solid rgba(0,229,255,0.05);
+    color: #6a9ab0; cursor: pointer;
+    transition: color 0.15s, background 0.15s;
+    font-family: 'Rajdhani', sans-serif;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li:hover { color: var(--text); background: rgba(0,229,255,0.02); }
+  .check-box {
+    width: 16px; height: 16px;
+    border: 1px solid rgba(0,229,255,0.3); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    clip-path: polygon(3px 0,100% 0,calc(100% - 3px) 100%,0 100%);
+  }
+  .checklist li.done .check-box { background: var(--green); border-color: var(--green); box-shadow: 0 0 8px rgba(0,255,136,0.4); }
+  .checklist li.done .check-box::after { content: '✓'; color: #000; font-size: 0.65rem; font-weight: 900; }
+  .checklist li.done span { text-decoration: line-through; color: var(--muted); }
+
+  .pattern-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--card); border: 1px solid var(--border);
+    padding: 9px 14px;
+    font-size: 0.8rem; font-weight: 600; font-family: 'Rajdhani', sans-serif;
+    letter-spacing: 0.03em;
+    transition: all 0.2s; cursor: default;
+    clip-path: polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%);
+  }
+  .pattern-tag:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 12px rgba(0,229,255,0.12); background: rgba(0,229,255,0.04); }
+  .pattern-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+
+  .divider { border: none; margin: 28px 0; height: 1px; background: linear-gradient(90deg, transparent, var(--accent), rgba(191,0,255,0.6), transparent); opacity: 0.3; }
+
+  .prog-wrap { margin: 24px 0; }
+  .prog-label { display: flex; justify-content: space-between; font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; color: var(--muted); margin-bottom: 8px; letter-spacing: 0.08em; }
+  .prog-bar { height: 4px; background: rgba(0,229,255,0.06); overflow: hidden; position: relative; }
+  .prog-bar::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, rgba(0,229,255,0.05) 0, rgba(0,229,255,0.05) 2px, transparent 2px, transparent 8px); }
+  .prog-fill { height: 100%; background: linear-gradient(90deg, var(--accent2), var(--accent), var(--green)); transition: width 1.2s cubic-bezier(0.22,1,0.36,1); box-shadow: 0 0 12px rgba(0,229,255,0.6), 0 0 24px rgba(0,229,255,0.2); position: relative; }
+  .prog-fill::after { content: ''; position: absolute; right: 0; top: -2px; width: 3px; height: 8px; background: #fff; box-shadow: 0 0 8px var(--accent); }
+
+  h3 { font-family: 'Orbitron', monospace; font-size: 0.82rem; font-weight: 600; color: var(--text); margin: 18px 0 10px; letter-spacing: 0.06em; text-transform: uppercase; }
+  h3.small { font-size: 0.62rem; letter-spacing: 0.18em; color: var(--muted); margin: 22px 0 10px; display: flex; align-items: center; gap: 8px; }
+  h3.small::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.2); }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(0,229,255,0.4); }
+
+  @media (max-width: 640px) {
+    .two-col { grid-template-columns: 1fr; }
+    .cards-2 { grid-template-columns: 1fr; }
+    .logo { font-size: 0.8rem; }
+    .section-title { font-size: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="inner">
+      <div class="logo">JPMC<span> Coding Prep</span></div>
+      <div class="badge">⚡ Exam Tomorrow</div>
+    </div>
+    <nav class="nav-tabs">
+      <button class="tab-btn active" onclick="showTab('overview')">Overview</button>
+      <button class="tab-btn" onclick="showTab('prefix')">Prefix Sum</button>
+      <button class="tab-btn" onclick="showTab('sliding')">Sliding Window</button>
+      <button class="tab-btn" onclick="showTab('stack')">Stack / Monotonic</button>
+      <button class="tab-btn" onclick="showTab('graphs')">Graphs / BFS</button>
+      <button class="tab-btn" onclick="showTab('ll')">Linked Lists</button>
+      <button class="tab-btn" onclick="showTab('binary')">Binary Search</button>
+      <button class="tab-btn" onclick="showTab('jpmc')">⭐ JPMC Questions</button>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════════ OVERVIEW -->
+<section id="tab-overview" class="section active">
+  <div class="section-title">Your <span>Prep Summary</span></div>
+  <div class="section-sub">Everything you've covered — distilled for quick review</div>
+
+  <div class="prog-wrap">
+    <div class="prog-label"><span>Questions Completed</span><span>25+ Problems</span></div>
+    <div class="prog-bar"><div class="prog-fill" style="width:85%"></div></div>
+  </div>
+
+  <h3 class="small">Core Patterns You've Mastered</h3>
+  <div class="pattern-grid">
+    <span class="pattern-tag">🗂 Prefix Sum + HashMap</span>
+    <span class="pattern-tag">🪟 Sliding Window</span>
+    <span class="pattern-tag">📚 Monotonic Stack</span>
+    <span class="pattern-tag">🔗 Linked List Tricks</span>
+    <span class="pattern-tag">🌊 BFS / Multi-source BFS</span>
+    <span class="pattern-tag">🔍 Binary Search on Answer</span>
+    <span class="pattern-tag">⛽ Greedy</span>
+    <span class="pattern-tag">🧮 Two Pointers</span>
+    <span class="pattern-tag">🏃 Jump Game DP</span>
+  </div>
+
+  <hr class="divider">
+
+  <h3 class="small">All Questions — Quick Checklist</h3>
+  <ul class="checklist" id="masterChecklist">
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Subarray Sum Equals K</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Subarray Sum Divisible by K</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Subarray Sum Divisible by K (min length 2)</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Subarrays with K Distinct Elements</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Next Greater Element I</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Next Greater Element II (circular)</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Next Greater Node in Linked List</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Middle of Linked List</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Cycle in Linked List (Floyd's)</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Cycle II — Entry Point</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Merge Two Sorted Lists</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Longest Character Replacement</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Longest Substring Without Repeating Characters</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Furthest Building We Can Reach</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Gas Station</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Number of Islands</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Rotten Oranges</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Valid Parenthesis</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Koko Eating Bananas</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Valid Palindrome II</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Jump Game I</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Jump Game II</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>Two Sum</span></li>
+    <li onclick="toggleCheck(this)"><div class="check-box"></div><span>LC-1010 (Pairs of Songs)</span></li>
+  </ul>
+
+  <hr class="divider">
+  <div class="insight">
+    <strong>Tomorrow's Strategy:</strong> For each problem — state the brute force first, identify why it TLEs, then describe the optimal pattern. JPMC interviewers love seeing your thought process.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ PREFIX SUM -->
+<section id="tab-prefix" class="section">
+  <div class="section-title">Prefix Sum <span>+ HashMap</span></div>
+  <div class="section-sub">The most-tested pattern in your prep. Master the variants.</div>
+
+  <div class="cards cards-2">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">1. Subarray Sum Equals K</div>
+        <span class="tag tag-blue">LC-560</span>
+      </div>
+      <p>Count subarrays whose sum equals exactly K.</p>
+      <div class="insight">
+        <strong>Key Idea:</strong> If prefix[j] - prefix[i] = K, then subarray [i+1..j] sums to K.<br>
+        So check: <code>mp.count(sum - k)</code>
+      </div>
+      <ul class="steps">
+        <li data-n="1">Initialize <code>mp[0] = 1</code> (empty prefix)</li>
+        <li data-n="2">For each element, add to running sum</li>
+        <li data-n="3">If <code>sum - k</code> exists in map, add its count</li>
+        <li data-n="4">Store <code>mp[sum]++</code></li>
+      </ul>
+      <div class="code-block"><span class="type">unordered_map</span>&lt;<span class="type">int</span>,<span class="type">int</span>&gt; mp;
+mp[<span class="num">0</span>] = <span class="num">1</span>;
+<span class="type">int</span> sum = <span class="num">0</span>, count = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="type">int</span> x : nums) {
+    sum += x;
+    <span class="kw">if</span> (mp.count(sum - k))
+        count += mp[sum - k];
+    mp[sum]++;
+}
+<span class="kw">return</span> count;</div>
+      <div class="complexity">
+        <span class="cx cx-time">Time: O(n)</span>
+        <span class="cx cx-space">Space: O(n)</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">2. Subarray Sum Divisible by K</div>
+        <span class="tag tag-purple">LC-974</span>
+      </div>
+      <p>Count subarrays whose sum is divisible by K.</p>
+      <div class="insight">
+        <strong>Key Idea:</strong> Two prefix sums with the same remainder mod K → their difference is divisible by K.<br>
+        Store <code>rem = ((sum%k) + k) % k</code> — the <code>+k</code> handles negative numbers!
+      </div>
+      <div class="warn">
+        ⚠️ Always use <code>((sum%k)+k)%k</code>, never just <code>sum%k</code> — negative modulo is different in C++!
+      </div>
+      <div class="code-block">mp[<span class="num">0</span>] = <span class="num">1</span>;
+<span class="type">int</span> sum = <span class="num">0</span>, count = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="type">int</span> x : nums) {
+    sum += x;
+    <span class="type">int</span> rem = ((sum % k) + k) % k;
+    <span class="kw">if</span> (mp.count(rem)) count += mp[rem];
+    mp[rem]++;
+}
+<span class="kw">return</span> count;</div>
+      <div class="complexity">
+        <span class="cx cx-time">Time: O(n)</span>
+        <span class="cx cx-space">Space: O(k)</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">3. Subarray Div by K (min length 2)</div>
+        <span class="tag tag-amber">Twist!</span>
+      </div>
+      <p>Same as above but subarrays must have length ≥ 2.</p>
+      <div class="insight">
+        <strong>Key Twist:</strong> Delay inserting the first prefix-remainder into the map.<br>
+        Process <code>nums[0]</code> and compute its remainder, but <strong>don't add it to mp yet</strong>. Start the loop from index 1. This ensures we never pick single-element subarrays.
+      </div>
+      <div class="code-block"><span class="type">int</span> s = <span class="num">0</span>, c = <span class="num">0</span>;
+s += nums[<span class="num">0</span>];
+<span class="type">int</span> r = ((s%k)+k)%k;
+mp[r] = <span class="num">1</span>; <span class="cm">// seed after first element</span>
+<span class="kw">for</span>(<span class="type">int</span> i=<span class="num">1</span>; i&lt;n; ++i){
+    s += nums[i];
+    r = ((s%k)+k)%k;
+    <span class="kw">if</span>(mp.count(r)) c += mp[r];
+    mp[r]++;
+}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">4. Twist: Max Non-Overlapping Subarrays (sum=K)</div>
+        <span class="tag tag-amber">Variant</span>
+      </div>
+      <p>Count maximum number of <strong>non-overlapping</strong> subarrays with sum = K.</p>
+      <div class="insight">
+        <strong>Greedy Trick:</strong> When you find a valid subarray, <strong>clear the map</strong> and reset sum to 0. This greedily ends the current subarray and starts fresh.
+      </div>
+      <div class="code-block">mp[<span class="num">0</span>] = <span class="num">1</span>; <span class="type">int</span> sum=<span class="num">0</span>, c=<span class="num">0</span>;
+<span class="kw">for</span>(<span class="type">int</span> x : nums){
+    sum += x;
+    <span class="kw">if</span>(mp.count(sum-k)){
+        c++;
+        mp.clear();  <span class="cm">// ← key line!</span>
+        mp[<span class="num">0</span>] = <span class="num">1</span>; sum = <span class="num">0</span>;
+    } <span class="kw">else</span> mp[sum]++;
+}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">5. LC-1010: Pairs of Songs (% 60)</div>
+        <span class="tag tag-green">LC-1010</span>
+      </div>
+      <p>Count pairs where <code>(time[i] + time[j]) % 60 == 0</code>.</p>
+      <div class="insight">
+        <strong>Like Two Sum but mod 60.</strong> For each song with duration t, you want complement = <code>(600 - t) % 60</code>.<br>
+        Use 600 (not 60) to avoid negative modulo issues.
+      </div>
+      <div class="code-block"><span class="kw">for</span>(<span class="type">int</span> t : time){
+    <span class="type">int</span> c = <span class="num">600</span> - t;
+    count += mp[c%<span class="num">60</span>];
+    mp[t%<span class="num">60</span>]++;
+}</div>
+      <div class="warn">⚠️ Why 600? Because -1 % 60 = -1 in C++, but (600-1) % 60 = 59. Always offset to avoid negatives.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">6. Two Sum</div>
+        <span class="tag tag-green">LC-1</span>
+      </div>
+      <p>Return indices of pair summing to target.</p>
+      <div class="insight">
+        <strong>Idea:</strong> For each element, check if its complement (<code>target - nums[i]</code>) is already in the map. If yes → found the pair. Otherwise store current element's index.
+      </div>
+      <div class="code-block"><span class="type">unordered_map</span>&lt;<span class="type">int</span>,<span class="type">int</span>&gt; mp;
+<span class="kw">for</span> (<span class="type">int</span> i = <span class="num">0</span>; i &lt; n; ++i) {
+    <span class="type">int</span> complement = target - nums[i];
+    <span class="kw">if</span> (mp.count(complement))
+        <span class="kw">return</span> {mp[complement], i};
+    mp[nums[i]] = i;
+}
+<span class="kw">return</span> {};</div>
+      <div class="complexity">
+        <span class="cx cx-time">Time: O(n)</span>
+        <span class="cx cx-space">Space: O(n)</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ SLIDING WINDOW -->
+<section id="tab-sliding" class="section">
+  <div class="section-title">Sliding <span>Window</span></div>
+  <div class="section-sub">Variable-size window + HashMap. Key: when to shrink.</div>
+
+  <div class="cards cards-2">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Longest Substring Without Repeating Chars</div>
+        <span class="tag tag-green">LC-3</span>
+      </div>
+      <p>Find length of longest substring with all distinct characters.</p>
+      <ul class="steps">
+        <li data-n="1">Use HashMap to store last seen index of each char</li>
+        <li data-n="2">Maintain left pointer <code>l</code></li>
+        <li data-n="3">On duplicate: move <code>l = max(l, mp[s[r]] + 1)</code></li>
+        <li data-n="4">Update answer: <code>ml = max(r - l + 1, ml)</code></li>
+      </ul>
+      <div class="insight">
+        <strong>Why max(l, ...)?</strong> To avoid moving the left pointer backwards. The map might have a stale entry from before our current window.
+      </div>
+      <div class="code-block"><span class="type">int</span> l = <span class="num">0</span>, ml = <span class="num">0</span>;
+<span class="type">unordered_map</span>&lt;<span class="type">char</span>,<span class="type">int</span>&gt; mp;
+<span class="kw">for</span> (<span class="type">int</span> r = <span class="num">0</span>; r &lt; s.size(); r++) {
+    <span class="kw">if</span> (mp.find(s[r]) != mp.end())
+        l = max(mp[s[r]] + <span class="num">1</span>, l);
+    mp[s[r]] = r;
+    ml = max(r - l + <span class="num">1</span>, ml);
+}
+<span class="kw">return</span> ml;</div>
+      <div class="complexity">
+        <span class="cx cx-time">Time: O(n)</span>
+        <span class="cx cx-space">Space: O(26) = O(1)</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Longest Repeating Character Replacement</div>
+        <span class="tag tag-blue">LC-424</span>
+      </div>
+      <p>Replace at most K characters to make longest substring of one char.</p>
+      <div class="insight">
+        <strong>Key Formula:</strong> Window is valid when <code>(window_size - maxFreq) ≤ K</code>.<br>
+        Track max frequency in window. If invalid, shrink from left (but don't update maxFreq on shrink — it's a classic trick to avoid O(26) recalc).
+      </div>
+      <div class="code-block"><span class="type">int</span> freq[<span class="num">26</span>] = {}, maxFreq = <span class="num">0</span>, ans = <span class="num">0</span>, l = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="type">int</span> r = <span class="num">0</span>; r &lt; s.size(); r++) {
+    maxFreq = max(maxFreq, ++freq[s[r]-<span class="str">'A'</span>]);
+    <span class="kw">while</span> ((r - l + <span class="num">1</span>) - maxFreq &gt; k)
+        freq[s[l++]-<span class="str">'A'</span>]--;
+    ans = max(ans, r - l + <span class="num">1</span>);
+}
+<span class="kw">return</span> ans;</div>
+      <div class="complexity">
+        <span class="cx cx-time">Time: O(n)</span>
+        <span class="cx cx-space">Space: O(26)</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Subarrays with K Distinct Elements</div>
+        <span class="tag tag-purple">LC-992</span>
+      </div>
+      <p>Count subarrays with <em>exactly</em> K distinct elements.</p>
+      <div class="insight">
+        <strong>The Magic Formula:</strong><br>
+        <code>exactly(K) = atMost(K) − atMost(K−1)</code><br><br>
+        Direct counting of "exactly K" is tricky. But "at most K" is easy with sliding window!
+      </div>
+      <ul class="steps">
+        <li data-n="1">Write <code>atMost(nums, k)</code> function</li>
+        <li data-n="2">Expand right: add element to freq map</li>
+        <li data-n="3">Shrink left while distinct elements &gt; k</li>
+        <li data-n="4">Add <code>r - l + 1</code> to answer (all windows ending at r)</li>
+        <li data-n="5">Return <code>atMost(k) - atMost(k-1)</code></li>
+      </ul>
+      <div class="code-block"><span class="type">int</span> <span class="fn">atMost</span>(vector&lt;<span class="type">int</span>&gt;&amp; nums, <span class="type">int</span> k) {
+    <span class="type">int</span> l = <span class="num">0</span>, ans = <span class="num">0</span>;
+    <span class="type">unordered_map</span>&lt;<span class="type">int</span>,<span class="type">int</span>&gt; mp;
+    <span class="kw">for</span> (<span class="type">int</span> r = <span class="num">0</span>; r &lt; nums.size(); r++) {
+        mp[nums[r]]++;
+        <span class="kw">while</span> (mp.size() &gt; k) {
+            mp[nums[l]]--;
+            <span class="kw">if</span> (mp[nums[l]] == <span class="num">0</span>) mp.erase(nums[l]);
+            l++;
+        }
+        ans += (r - l + <span class="num">1</span>);
+    }
+    <span class="kw">return</span> ans;
+}
+<span class="kw">return</span> <span class="fn">atMost</span>(nums, k) - <span class="fn">atMost</span>(nums, k-<span class="num">1</span>);</div>
+      <div class="complexity">
+        <span class="cx cx-time">Time: O(n)</span>
+        <span class="cx cx-space">Space: O(k)</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Valid Palindrome II</div>
+        <span class="tag tag-green">LC-680</span>
+      </div>
+      <p>Can you make a palindrome by deleting at most one character?</p>
+      <ul class="steps">
+        <li data-n="1">Two pointers: l=0, r=n-1</li>
+        <li data-n="2">Move both inward while chars match</li>
+        <li data-n="3">On mismatch: try skipping s[l] OR s[r]</li>
+        <li data-n="4">Check if either remaining portion is a palindrome</li>
+      </ul>
+<div class="code-block"><span class="kw">auto</span> <span class="fn">isPalin</span> = [&](<span class="type">int</span> l, <span class="type">int</span> r) {
+    <span class="kw">while</span> (l &lt; r) <span class="kw">if</span> (s[l++] != s[r--]) <span class="kw">return false</span>;
+    <span class="kw">return true</span>;
+};
+<span class="type">int</span> l = <span class="num">0</span>, r = s.size() - <span class="num">1</span>;
+<span class="kw">while</span> (l &lt; r) {
+    <span class="kw">if</span> (s[l] != s[r])
+        <span class="kw">return</span> <span class="fn">isPalin</span>(l+<span class="num">1</span>,r) || <span class="fn">isPalin</span>(l,r-<span class="num">1</span>);
+    l++; r--;
+}
+<span class="kw">return true</span>;</div>
+      <div class="complexity">
+        <span class="cx cx-time">Time: O(n)</span>
+        <span class="cx cx-space">Space: O(1)</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Jump Game I</div>
+        <span class="tag tag-amber">LC-55</span>
+      </div>
+      <p>Can you reach the last index? Each element = max jump from that position.</p>
+      <div class="insight">
+        Track <code>maxReach</code>. For each index i ≤ maxReach, update <code>maxReach = max(maxReach, i + nums[i])</code>. If <code>maxReach ≥ n-1</code> at any point → true.
+      </div>
+      <div class="code-block"><span class="type">int</span> maxReach = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="type">int</span> i = <span class="num">0</span>; i &lt; n; i++) {
+    <span class="kw">if</span> (i &gt; maxReach) <span class="kw">return false</span>;
+    maxReach = max(maxReach, i + nums[i]);
+}
+<span class="kw">return true</span>;</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Jump Game II</div>
+        <span class="tag tag-amber">LC-45</span>
+      </div>
+      <p>Minimum jumps to reach the last index.</p>
+      <div class="insight">
+        Greedy BFS-like approach. Track <code>curEnd</code> (end of current jump range) and <code>farthest</code> (furthest reachable). When i reaches curEnd, increment jumps and set <code>curEnd = farthest</code>.
+      </div>
+      <div class="code-block"><span class="type">int</span> jumps = <span class="num">0</span>, curEnd = <span class="num">0</span>, farthest = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="type">int</span> i = <span class="num">0</span>; i &lt; n - <span class="num">1</span>; i++) {
+    farthest = max(farthest, i + nums[i]);
+    <span class="kw">if</span> (i == curEnd) {
+        jumps++;
+        curEnd = farthest;
+    }
+}
+<span class="kw">return</span> jumps;</div>
+      <div class="complexity">
+        <span class="cx cx-time">Time: O(n)</span>
+        <span class="cx cx-space">Space: O(1)</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ STACK -->
+<section id="tab-stack" class="section">
+  <div class="section-title">Stack <span>/ Monotonic</span></div>
+  <div class="section-sub">Monotonic stack: maintain decreasing order, pop when smaller found.</div>
+
+  <div class="cards cards-2">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Next Greater Element I</div>
+        <span class="tag tag-blue">LC-496</span>
+      </div>
+      <p>For each element in nums1, find its next greater in nums2.</p>
+      <ul class="steps">
+        <li data-n="1">Process nums2 with a monotonic stack</li>
+        <li data-n="2">While stack top &lt; current: it has found its next greater</li>
+        <li data-n="3">Store in HashMap: <code>mp[popped] = current</code></li>
+        <li data-n="4">Look up nums1 elements in the map</li>
+      </ul>
+      <div class="code-block"><span class="type">stack</span>&lt;<span class="type">int</span>&gt; st;
+<span class="type">unordered_map</span>&lt;<span class="type">int</span>,<span class="type">int</span>&gt; mp;
+<span class="kw">for</span> (<span class="type">int</span> x : nums2) {
+    <span class="kw">while</span> (!st.empty() &amp;&amp; st.top() &lt; x) {
+        mp[st.top()] = x; st.pop();
+    }
+    st.push(x);
+}
+<span class="type">vector</span>&lt;<span class="type">int</span>&gt; ans;
+<span class="kw">for</span> (<span class="type">int</span> x : nums1)
+    ans.push_back(mp.count(x) ? mp[x] : -<span class="num">1</span>);
+<span class="kw">return</span> ans;</div>
+      <div class="complexity">
+        <span class="cx cx-time">Time: O(n+m)</span>
+        <span class="cx cx-space">Space: O(n)</span>
+      </div>
+    </div>
+
+    <!-- ── UPDATED: Next Greater Element II ── -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Next Greater Element II (Circular)</div>
+        <span class="tag tag-purple">LC-503</span>
+      </div>
+      <p>Circular array — after the last element, wrap around to find the next greater.</p>
+      <div class="insight">
+        <strong>Trick:</strong> Iterate <strong>2×n</strong> times using <code>i % n</code> to simulate the wrap. Push <strong>indices</strong> (not values) onto the stack so we can correctly map results back. Only push during the first pass (<code>i &lt; n</code>) to avoid duplicating result entries. Traverse <strong>right-to-left</strong> so the stack already holds "future" candidates when we process each index.
+      </div>
+      <div class="code-block"><span class="type">vector</span>&lt;<span class="type">int</span>&gt; <span class="fn">nextGreaterElements</span>(vector&lt;<span class="type">int</span>&gt;&amp; arr) {
+    <span class="type">int</span> n = arr.size();
+    <span class="type">vector</span>&lt;<span class="type">int</span>&gt; ans(n, -<span class="num">1</span>);
+    <span class="type">stack</span>&lt;<span class="type">int</span>&gt; st; <span class="cm">// stores VALUES (monotone decreasing)</span>
+
+    <span class="kw">for</span> (<span class="type">int</span> i = <span class="num">2</span>*n - <span class="num">1</span>; i &gt;= <span class="num">0</span>; i--) {
+        <span class="type">int</span> idx = i % n;
+
+        <span class="cm">// Pop elements that are not greater than current</span>
+        <span class="kw">while</span> (!st.empty() &amp;&amp; arr[idx] &gt;= st.top())
+            st.pop();
+
+        <span class="cm">// Only record answer on first pass (i &lt; n)</span>
+        <span class="kw">if</span> (i &lt; n &amp;&amp; !st.empty())
+            ans[idx] = st.top();
+
+        st.push(arr[idx]);
+    }
+    <span class="kw">return</span> ans;
+}</div>
+      <div class="warn">
+        ⚠️ Push <strong>values</strong> not indices here (unlike Sliding Window Max). The stack holds candidates for "next greater" — we compare values, not positions. Only write <code>ans[idx]</code> when <code>i &lt; n</code> to avoid overwriting with stale second-pass data.
+      </div>
+      <div class="complexity">
+        <span class="cx cx-time">Time: O(n)</span>
+        <span class="cx cx-space">Space: O(n)</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Valid Parenthesis</div>
+        <span class="tag tag-green">LC-20</span>
+      </div>
+      <p>Check if brackets are balanced.</p>
+      <ul class="steps">
+        <li data-n="1">Push open brackets onto stack</li>
+        <li data-n="2">On closing bracket: check top matches</li>
+        <li data-n="3">If mismatch or stack empty → false</li>
+        <li data-n="4">At end, stack must be empty</li>
+      </ul>
+      <div class="code-block"><span class="type">stack</span>&lt;<span class="type">char</span>&gt; st;
+<span class="kw">for</span> (<span class="type">char</span> c : s) {
+    <span class="kw">if</span> (c==<span class="str">'('</span>||c==<span class="str">'['</span>||c==<span class="str">'{'</span>){ st.push(c); <span class="kw">continue</span>; }
+    <span class="kw">if</span> (st.empty()) <span class="kw">return false</span>;
+    <span class="type">char</span> top = st.top(); st.pop();
+    <span class="kw">if</span> (c==<span class="str">')'</span>&amp;&amp;top!=<span class="str">'('</span>) <span class="kw">return false</span>;
+    <span class="kw">if</span> (c==<span class="str">']'</span>&amp;&amp;top!=<span class="str">'['</span>) <span class="kw">return false</span>;
+    <span class="kw">if</span> (c==<span class="str">'}'</span>&amp;&amp;top!=<span class="str">'{'</span>) <span class="kw">return false</span>;
+}
+<span class="kw">return</span> st.empty();</div>
+    </div>
+
+    <!-- ── UPDATED: Furthest Building ── -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Furthest Building (Greedy + Min-Heap)</div>
+        <span class="tag tag-amber">LC-1642</span>
+      </div>
+      <p>Use ladders on the biggest climbs, bricks on the rest.</p>
+      <div class="insight">
+        <strong>Greedy + Min-Heap:</strong> Use a ladder for every positive jump. Keep all used jumps in a min-heap of size ≤ ladders. When heap exceeds ladders, swap the smallest heap jump to bricks. If bricks run out → return current index.
+      </div>
+      <div class="code-block"><span class="type">priority_queue</span>&lt;<span class="type">int</span>,vector&lt;<span class="type">int</span>&gt;,greater&lt;<span class="type">int</span>&gt;&gt; pq;
+<span class="kw">for</span> (<span class="type">int</span> i = <span class="num">0</span>; i &lt; n-<span class="num">1</span>; i++) {
+    <span class="type">int</span> diff = heights[i+<span class="num">1</span>] - heights[i];
+    <span class="kw">if</span> (diff &lt;= <span class="num">0</span>) <span class="kw">continue</span>;
+    pq.push(diff);
+    <span class="kw">if</span> (pq.size() &gt; ladders) {
+        bricks -= pq.top(); pq.pop();
+        <span class="kw">if</span> (bricks &lt; <span class="num">0</span>) <span class="kw">return</span> i;
+    }
+}
+<span class="kw">return</span> n - <span class="num">1</span>;</div>
+      <div class="complexity">
+        <span class="cx cx-time">Time: O(n log L)</span>
+        <span class="cx cx-space">Space: O(L)</span>
+      </div>
+      <hr class="divider" style="margin:16px 0;opacity:0.15">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:0.6rem;letter-spacing:0.18em;color:var(--muted);margin-bottom:10px;">▸ BINARY SEARCH VARIANT</div>
+      <p style="color:#6a9ab0;font-size:0.85rem;line-height:1.6;margin-bottom:10px;">Binary search on the answer index: for a candidate <code>mid</code>, collect all positive climbs in <code>[0, mid)</code>, sort descending, greedily assign ladders to the largest climbs and bricks to the rest. If feasible, try going further.</p>
+      <div class="code-block"><span class="type">int</span> l = <span class="num">0</span>, h = heights.size() - <span class="num">1</span>, ans = <span class="num">0</span>;
+<span class="kw">while</span> (l &lt;= h) {
+    <span class="type">int</span> mid = l + (h - l) / <span class="num">2</span>;
+    vector&lt;<span class="type">int</span>&gt; climbs;
+    <span class="kw">for</span> (<span class="type">int</span> i = <span class="num">0</span>; i &lt; mid; ++i)
+        <span class="kw">if</span> (heights[i+<span class="num">1</span>] &gt; heights[i])
+            climbs.push_back(heights[i+<span class="num">1</span>] - heights[i]);
+
+    sort(climbs.begin(), climbs.end(), greater&lt;<span class="type">int</span>&gt;());
+
+    <span class="type">int</span> usedBricks = <span class="num">0</span>, usedLadders = <span class="num">0</span>;
+    <span class="type">bool</span> possible = <span class="kw">true</span>;
+    <span class="kw">for</span> (<span class="type">int</span> c : climbs) {
+        <span class="kw">if</span> (usedLadders &lt; ladders) usedLadders++;
+        <span class="kw">else if</span> (usedBricks + c &lt;= bricks) usedBricks += c;
+        <span class="kw">else</span> { possible = <span class="kw">false</span>; <span class="kw">break</span>; }
+    }
+    <span class="kw">if</span> (possible) { ans = mid; l = mid + <span class="num">1</span>; }
+    <span class="kw">else</span>          { h = mid - <span class="num">1</span>; }
+}
+<span class="kw">return</span> ans;</div>
+      <div class="insight">
+        <strong>Greedy insight inside canReach:</strong> always use ladders on the largest climbs (sorted desc), so remaining climbs consume the fewest bricks.
+      </div>
+      <div class="complexity">
+        <span class="cx cx-time">Time: O(n² log n) worst</span>
+        <span class="cx cx-space">Space: O(n)</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Gas Station</div>
+        <span class="tag tag-green">LC-134</span>
+      </div>
+      <p>Find starting gas station to complete a circular route.</p>
+      <div class="insight">
+        <strong>Two-pass Greedy:</strong> If total gas ≥ total cost, a solution always exists. Track running tank; when it goes negative, reset start to i+1 and clear tank. The final start is the answer.
+      </div>
+      <div class="code-block"><span class="type">int</span> totalGas = <span class="num">0</span>, tank = <span class="num">0</span>, start = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="type">int</span> i = <span class="num">0</span>; i &lt; n; i++) {
+    totalGas += gas[i] - cost[i];
+    tank     += gas[i] - cost[i];
+    <span class="kw">if</span> (tank &lt; <span class="num">0</span>) { start = i+<span class="num">1</span>; tank = <span class="num">0</span>; }
+}
+<span class="kw">return</span> totalGas &gt;= <span class="num">0</span> ? start : -<span class="num">1</span>;</div>
+      <div class="complexity">
+        <span class="cx cx-time">Time: O(n)</span>
+        <span class="cx cx-space">Space: O(1)</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ GRAPHS -->
+<section id="tab-graphs" class="section">
+  <div class="section-title">Graphs <span>/ BFS</span></div>
+  <div class="section-sub">Multi-source BFS is the key pattern for both Islands and Rotten Oranges.</div>
+
+  <div class="cards cards-2">
+
+    <!-- ── UPDATED: Number of Islands ── -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Number of Islands</div>
+        <span class="tag tag-blue">LC-200</span>
+      </div>
+      <p>Count connected components of '1's in a 2D grid.</p>
+      <ul class="steps">
+        <li data-n="1">Iterate grid — on finding unvisited '1', increment count</li>
+        <li data-n="2">BFS: push cell into queue, mark visited immediately on enqueue</li>
+        <li data-n="3">Expand 4 directions, skip out-of-bounds / water / already visited</li>
+        <li data-n="4">All cells reachable from this '1' get marked — they belong to the same island</li>
+      </ul>
+      <div class="insight">
+        <strong>Mark visited on enqueue, not dequeue!</strong> If you mark on dequeue, the same cell can be pushed multiple times, causing incorrect counts and TLE on dense grids. Use a separate <code>vis</code> matrix so the original grid is untouched.
+      </div>
+      <div class="code-block"><span class="type">int</span> <span class="fn">numIslands</span>(vector&lt;vector&lt;<span class="type">char</span>&gt;&gt;&amp; grid) {
+    <span class="type">int</span> n = grid.size(), m = grid[<span class="num">0</span>].size();
+    vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; dir = {{<span class="num">0</span>,<span class="num">1</span>},{<span class="num">0</span>,-<span class="num">1</span>},{<span class="num">1</span>,<span class="num">0</span>},{-<span class="num">1</span>,<span class="num">0</span>}};
+    vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; vis(n, vector&lt;<span class="type">int</span>&gt;(m, <span class="num">0</span>));
+    <span class="type">int</span> c = <span class="num">0</span>;
+
+    <span class="kw">for</span> (<span class="type">int</span> i = <span class="num">0</span>; i &lt; n; i++) {
+        <span class="kw">for</span> (<span class="type">int</span> j = <span class="num">0</span>; j &lt; m; j++) {
+            <span class="kw">if</span> (vis[i][j] || grid[i][j] == <span class="str">'0'</span>) <span class="kw">continue</span>;
+
+            c++;
+            queue&lt;pair&lt;<span class="type">int</span>,<span class="type">int</span>&gt;&gt; q;
+            q.push({i, j});
+            vis[i][j] = <span class="num">1</span>; <span class="cm">// mark on ENQUEUE</span>
+
+            <span class="kw">while</span> (!q.empty()) {
+                <span class="kw">auto</span> [x, y] = q.front(); q.pop();
+                <span class="kw">for</span> (<span class="kw">auto</span> d : dir) {
+                    <span class="type">int</span> nx = x + d[<span class="num">0</span>], ny = y + d[<span class="num">1</span>];
+                    <span class="kw">if</span> (nx &gt;= <span class="num">0</span> &amp;&amp; nx &lt; n &amp;&amp; ny &gt;= <span class="num">0</span> &amp;&amp; ny &lt; m
+                        &amp;&amp; !vis[nx][ny] &amp;&amp; grid[nx][ny] == <span class="str">'1'</span>) {
+                        vis[nx][ny] = <span class="num">1</span>; <span class="cm">// mark on ENQUEUE</span>
+                        q.push({nx, ny});
+                    }
+                }
+            }
+        }
+    }
+    <span class="kw">return</span> c;
+}</div>
+      <div class="warn">⚠️ Boundary check: <code>nx &gt;= 0 &amp;&amp; nx &lt; n &amp;&amp; ny &gt;= 0 &amp;&amp; ny &lt; m</code> — always check both axes. Your original code had <code>nx&lt;n &amp;&amp; nx&gt;=0</code> which works but is less readable; keep it consistent.</div>
+      <div class="complexity">
+        <span class="cx cx-time">Time: O(n×m)</span>
+        <span class="cx cx-space">Space: O(n×m)</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Rotten Oranges</div>
+        <span class="tag tag-purple">LC-994</span>
+      </div>
+      <p>Minimum time for all oranges to rot. Multi-source BFS.</p>
+      <ul class="steps">
+        <li data-n="1">Add all rotten oranges (2s) to queue at once</li>
+        <li data-n="2">Count fresh oranges</li>
+        <li data-n="3">BFS level-by-level (each level = 1 minute)</li>
+        <li data-n="4">If fresh = 0 → return minutes, else -1</li>
+      </ul>
+      <div class="insight">
+        <strong>Why multi-source?</strong> All rotten oranges rot simultaneously, not sequentially. Starting all of them in the queue simulates parallel spreading.
+      </div>
+      <div class="code-block"><span class="type">queue</span>&lt;pair&lt;<span class="type">int</span>,<span class="type">int</span>&gt;&gt; q;
+<span class="type">int</span> fresh=<span class="num">0</span>, mins=<span class="num">0</span>;
+<span class="kw">for</span>(<span class="type">int</span> i=<span class="num">0</span>;i&lt;n;i++) <span class="kw">for</span>(<span class="type">int</span> j=<span class="num">0</span>;j&lt;m;j++){
+    <span class="kw">if</span>(grid[i][j]==<span class="num">2</span>) q.push({i,j});
+    <span class="kw">if</span>(grid[i][j]==<span class="num">1</span>) fresh++;
+}
+<span class="kw">while</span>(!q.empty() &amp;&amp; fresh){
+    <span class="type">int</span> sz=q.size(); mins++;
+    <span class="kw">while</span>(sz--){
+        <span class="kw">auto</span> [r,c]=q.front(); q.pop();
+        <span class="kw">for</span>(<span class="kw">auto</span>&amp; d:dirs){
+            <span class="type">int</span> nr=r+d[<span class="num">0</span>],nc=c+d[<span class="num">1</span>];
+            <span class="kw">if</span>(nr&gt;=<span class="num">0</span>&amp;&amp;nr&lt;n&amp;&amp;nc&gt;=<span class="num">0</span>&amp;&amp;nc&lt;m&amp;&amp;grid[nr][nc]==<span class="num">1</span>)
+              { grid[nr][nc]=<span class="num">2</span>; fresh--; q.push({nr,nc}); }
+        }
+    }
+}
+<span class="kw">return</span> fresh==<span class="num">0</span> ? mins : -<span class="num">1</span>;</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Rotten Oranges — Circular Grid Twist</div>
+        <span class="tag tag-red">Twist!</span>
+      </div>
+      <p>Grid wraps around — last column touches first column, last row touches first row.</p>
+      <div class="code-block"><span class="cm">// Instead of boundary check:</span>
+<span class="type">int</span> nx = (x + d[<span class="num">0</span>] + n) % n;
+<span class="type">int</span> ny = (y + d[<span class="num">1</span>] + m) % m;
+<span class="cm">// +n/+m before %n/%m ensures no negative mod</span></div>
+      <div class="insight">
+        The boundary check <code>if(nx&gt;=0 && nx&lt;n)</code> becomes redundant — modular arithmetic handles wrapping. But keep the freshness check!
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">BFS Template</div>
+        <span class="tag tag-green">Template</span>
+      </div>
+      <div class="code-block">queue&lt;pair&lt;<span class="type">int</span>,<span class="type">int</span>&gt;&gt; q;
+q.push({startR, startC});
+visited[startR][startC] = <span class="num">true</span>;
+
+<span class="kw">while</span>(!q.empty()){
+    <span class="type">int</span> sz = q.size(); <span class="cm">// level size</span>
+    <span class="kw">while</span>(sz--){
+        <span class="kw">auto</span> [r,c] = q.front(); q.pop();
+        <span class="kw">for</span>(<span class="kw">auto</span> [dr,dc] : dirs){
+            <span class="type">int</span> nr=r+dr, nc=c+dc;
+            <span class="kw">if</span>(valid &amp;&amp; !visited[nr][nc]){
+                visited[nr][nc] = <span class="num">true</span>;
+                q.push({nr,nc});
+            }
+        }
+    }
+    level++;
+}</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ LINKED LIST -->
+<section id="tab-ll" class="section">
+  <div class="section-title">Linked <span>Lists</span></div>
+  <div class="section-sub">Floyd's cycle detection, fast/slow pointers, and in-place reversal.</div>
+
+  <div class="cards cards-2">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Middle of Linked List</div>
+        <span class="tag tag-green">LC-876</span>
+      </div>
+      <p>Find the middle node. If even length, return the second middle.</p>
+      <div class="insight">
+        <strong>Fast/Slow Pointers:</strong> slow moves 1 step, fast moves 2 steps. When fast reaches end, slow is at the middle.
+      </div>
+      <div class="code-block"><span class="kw">while</span>(fast &amp;&amp; fast-&gt;next){
+    slow = slow-&gt;next;
+    fast = fast-&gt;next-&gt;next;
+}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Cycle Detection (Floyd's)</div>
+        <span class="tag tag-blue">LC-141</span>
+      </div>
+      <p>Does the linked list have a cycle?</p>
+      <ul class="steps">
+        <li data-n="1">slow = fast = head</li>
+        <li data-n="2">Move slow by 1, fast by 2</li>
+        <li data-n="3">If they meet → cycle exists</li>
+        <li data-n="4">If fast reaches null → no cycle</li>
+      </ul>
+      <div class="code-block"><span class="type">ListNode</span>* slow=head, *fast=head;
+<span class="kw">while</span>(fast &amp;&amp; fast-&gt;next){
+    slow=slow-&gt;next;
+    fast=fast-&gt;next-&gt;next;
+    <span class="kw">if</span>(slow==fast) <span class="kw">return true</span>;
+}
+<span class="kw">return false</span>;</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Cycle II — Entry Point</div>
+        <span class="tag tag-purple">LC-142</span>
+      </div>
+      <p>Find where the cycle begins.</p>
+      <div class="insight">
+        After slow and fast meet inside the cycle: reset one pointer to <strong>head</strong>. Move both one step at a time. Where they meet again = cycle entry point.<br><br>
+        <strong>Math:</strong> Distance from head to entry = distance from meeting point to entry (going forward in cycle).
+      </div>
+      <div class="code-block"><span class="type">ListNode</span>* slow=head, *fast=head;
+<span class="kw">while</span>(fast &amp;&amp; fast-&gt;next){
+    slow=slow-&gt;next; fast=fast-&gt;next-&gt;next;
+    <span class="kw">if</span>(slow==fast){
+        <span class="type">ListNode</span>* prev=head;
+        <span class="kw">while</span>(prev!=slow){
+            prev=prev-&gt;next; slow=slow-&gt;next;
+        }
+        <span class="kw">return</span> prev;
+    }
+}
+<span class="kw">return nullptr</span>;</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Merge Two Sorted Lists</div>
+        <span class="tag tag-green">LC-21</span>
+      </div>
+      <p>Merge two sorted linked lists in-place.</p>
+      <ul class="steps">
+        <li data-n="1">Create dummy head node</li>
+        <li data-n="2">Compare l1 and l2 values, pick smaller</li>
+        <li data-n="3">Advance the pointer of the smaller list</li>
+        <li data-n="4">Attach remaining list at the end</li>
+      </ul>
+      <div class="code-block"><span class="cm">// Recursive</span>
+<span class="kw">if</span>(!l1) <span class="kw">return</span> l2; <span class="kw">if</span>(!l2) <span class="kw">return</span> l1;
+<span class="kw">if</span>(l1-&gt;val &lt; l2-&gt;val){
+    l1-&gt;next=<span class="fn">merge</span>(l1-&gt;next,l2); <span class="kw">return</span> l1;
+} <span class="kw">else</span> {
+    l2-&gt;next=<span class="fn">merge</span>(l1,l2-&gt;next); <span class="kw">return</span> l2;
+}</div>
+<div class="code-block"><span class="cm">// Iterative</span>
+<span class="type">ListNode</span>* pts=(l1-&gt;val&lt;=l2-&gt;val)?l1:l2;
+<span class="kw">if</span>(l1-&gt;val&lt;l2-&gt;val) l1=l1-&gt;next; <span class="kw">else</span> l2=l2-&gt;next;
+<span class="type">ListNode</span>* curr=pts;
+<span class="kw">while</span>(l1&amp;&amp;l2){
+    <span class="kw">if</span>(l1-&gt;val&lt;l2-&gt;val){curr-&gt;next=l1;l1=l1-&gt;next;}
+    <span class="kw">else</span>               {curr-&gt;next=l2;l2=l2-&gt;next;}
+    curr=curr-&gt;next;
+}
+curr-&gt;next=l1?l1:l2; <span class="kw">return</span> pts;</div>
+      <div class="complexity">
+        <span class="cx cx-time">Time: O(n+m)</span>
+        <span class="cx cx-space">Space: O(1)</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Next Greater Node in LL</div>
+        <span class="tag tag-amber">LC-1019</span>
+      </div>
+      <p>For each node, find value of next greater node.</p>
+      <div class="insight">
+        Convert to array first, then apply monotonic stack (same as NGE I). Push <strong>indices</strong> to the stack so you can update the result array correctly.
+      </div>
+      <div class="code-block"><span class="type">ListNode</span>* t=head;
+<span class="type">vector</span>&lt;<span class="type">int</span>&gt; vals;
+<span class="kw">while</span>(t){ vals.push_back(t-&gt;val); t=t-&gt;next; }
+<span class="type">int</span> n=vals.size();
+<span class="type">vector</span>&lt;<span class="type">int</span>&gt; ans(n,<span class="num">0</span>);
+<span class="type">stack</span>&lt;<span class="type">int</span>&gt; st;
+<span class="kw">for</span>(<span class="type">int</span> i=n-<span class="num">1</span>;i&gt;=<span class="num">0</span>;i--){
+    <span class="kw">while</span>(!st.empty()&amp;&amp;vals[st.top()]&lt;=vals[i])
+        st.pop();
+    <span class="kw">if</span>(!st.empty()) ans[i]=vals[st.top()];
+    st.push(i);
+}
+<span class="kw">return</span> ans;</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ BINARY SEARCH -->
+<section id="tab-binary" class="section">
+  <div class="section-title">Binary <span>Search</span></div>
+  <div class="section-sub">"Binary search on the answer" — when the answer space is monotonic.</div>
+
+  <div class="cards cards-2">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Koko Eating Bananas</div>
+        <span class="tag tag-blue">LC-875</span>
+      </div>
+      <p>Find minimum eating rate K to finish all piles in H hours.</p>
+      <div class="insight">
+        <strong>Binary search on K:</strong> K ranges from 1 to max(piles). For a given K, time = Σ ceil(pile/K). If time ≤ H, K is valid — try smaller. Else try larger.
+      </div>
+      <ul class="steps">
+        <li data-n="1"><code>lo=1, hi=max(piles)</code></li>
+        <li data-n="2">Compute mid = (lo+hi)/2</li>
+        <li data-n="3">Calculate total time: <code>Σ (p + mid - 1) / mid</code></li>
+        <li data-n="4">If time ≤ h: <code>ans = mid, hi = mid-1</code></li>
+        <li data-n="5">Else: <code>lo = mid + 1</code></li>
+      </ul>
+      <div class="warn">
+        ⚠️ <code>(p + mid - 1) / mid</code> is integer ceiling division — equivalent to <code>ceil(p / mid)</code>.
+      </div>
+      <div class="code-block"><span class="type">int</span> lo=<span class="num">1</span>, hi=*max_element(piles.begin(),piles.end()), ans=<span class="num">0</span>;
+<span class="kw">while</span>(lo&lt;=hi){
+    <span class="type">int</span> mid=lo+(hi-lo)/<span class="num">2</span>, t=<span class="num">0</span>;
+    <span class="kw">for</span>(<span class="type">int</span> p:piles) t+=(p+mid-<span class="num">1</span>)/mid;
+    <span class="kw">if</span>(t&lt;=h){ ans=mid; hi=mid-<span class="num">1</span>; }
+    <span class="kw">else</span>     { lo=mid+<span class="num">1</span>; }
+}
+<span class="kw">return</span> ans;</div>
+      <div class="complexity">
+        <span class="cx cx-time">Time: O(n log(max))</span>
+        <span class="cx cx-space">Space: O(1)</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Binary Search Template</div>
+        <span class="tag tag-green">Template</span>
+      </div>
+      <p>General pattern for "find minimum valid value":</p>
+      <div class="code-block"><span class="type">int</span> lo = <span class="num">1</span>, hi = maxVal, ans = -<span class="num">1</span>;
+<span class="kw">while</span>(lo &lt;= hi){
+    <span class="type">int</span> mid = lo + (hi-lo)/<span class="num">2</span>; <span class="cm">// avoid overflow</span>
+    <span class="kw">if</span>(isValid(mid)){
+        ans = mid;
+        hi = mid - <span class="num">1</span>; <span class="cm">// try to go lower</span>
+    } <span class="kw">else</span> {
+        lo = mid + <span class="num">1</span>; <span class="cm">// need bigger value</span>
+    }
+}
+<span class="kw">return</span> ans;</div>
+      <div class="insight">
+        <strong>Remember:</strong> Use <code>lo + (hi-lo)/2</code> over <code>(lo+hi)/2</code> to prevent integer overflow for large values.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ JPMC QUESTIONS -->
+<section id="tab-jpmc" class="section">
+  <div class="section-title">⭐ JPMC <span>Specific Questions</span></div>
+  <div class="section-sub">The actual questions from the round + close variants. Study these last!</div>
+
+  <div class="star-card">
+    <div class="star-title">🔑 Actual JPMC Question: Secure Password</div>
+    <p style="color:#d97706;font-size:0.9rem;line-height:1.7">
+      Given a binary string, split it into non-overlapping substrings where each substring has <strong>even length</strong> and contains only one type of character (all 0s or all 1s). Find the <strong>minimum flips</strong> to make this possible.
+    </p>
+    <div class="insight">
+      <strong>Key Insight:</strong> Group consecutive identical characters into runs. Each run of odd length needs exactly 1 flip (to make it even). Scan with two pointers, find each run's length, check parity.
+    </div>
+    <div class="code-block"><span class="type">int</span> flips = <span class="num">0</span>;
+<span class="kw">for</span>(<span class="type">int</span> i=<span class="num">0</span>; i&lt;s.size(); ){
+    <span class="type">int</span> j = i;
+    <span class="kw">while</span>(j &lt; s.size() &amp;&amp; s[j]==s[i]) j++;
+    <span class="type">int</span> len = j - i;
+    <span class="kw">if</span>(len % <span class="num">2</span> == <span class="num">1</span>) flips++;
+    i = j;
+}
+<span class="kw">return</span> flips;</div>
+    <div class="complexity">
+      <span class="cx cx-time">Time: O(n)</span>
+      <span class="cx cx-space">Space: O(1)</span>
+    </div>
+  </div>
+
+  <div class="cards cards-2">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Variant: Binary String Partition (diff ≤ K)</div>
+        <span class="tag tag-red">Variant</span>
+      </div>
+      <p>Partition into minimum substrings where |count(1s) - count(0s)| ≤ K.</p>
+      <div class="insight">
+        <strong>Greedy:</strong> Scan left to right, counting 1s and 0s. When the difference exceeds K, start a new partition. Handle the last partition after the loop with <code>if(ones > 0 || zeroes > 0) partitions++</code>.
+      </div>
+      <div class="code-block"><span class="type">int</span> ones=<span class="num">0</span>, zeros=<span class="num">0</span>, partitions=<span class="num">0</span>;
+<span class="kw">for</span>(<span class="type">int</span> i=<span class="num">0</span>; i&lt;n; i++){
+    <span class="kw">if</span>(s[i]==<span class="str">'1'</span>) ones++;
+    <span class="kw">else</span> zeros++;
+    <span class="kw">if</span>(abs(ones-zeros) &gt; k){
+        partitions++;
+        ones = zeros = <span class="num">0</span>;
+        i--; <span class="cm">// reprocess current char in new partition</span>
+    }
+}
+<span class="kw">if</span>(ones || zeros) partitions++;</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Why These Questions?</div>
+        <span class="tag tag-amber">Strategy</span>
+      </div>
+      <p style="color:#94a3b8;font-size:0.88rem;line-height:1.7">JPMC tends to ask questions that test:</p>
+      <ul class="steps">
+        <li data-n="✓">String manipulation with simple greedy rules</li>
+        <li data-n="✓">Prefix sum / HashMap mastery</li>
+        <li data-n="✓">BFS on grids (rotten oranges, islands)</li>
+        <li data-n="✓">Sliding window variants</li>
+        <li data-n="✓">Clean, readable code (not clever one-liners)</li>
+      </ul>
+      <div class="insight">
+        <strong>Tip:</strong> Always mention time and space complexity before they ask. Say "brute force is O(n²), but we can optimize to O(n) using prefix sum + hashmap."
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Quick Fire: Complexity Cheatsheet</div>
+        <span class="tag tag-green">Memory Aid</span>
+      </div>
+      <div class="two-col" style="margin-top:8px">
+        <div>
+          <h3 style="font-size:0.75rem;color:var(--muted);margin-bottom:8px">O(n) Solutions</h3>
+          <ul class="checklist" style="font-size:0.78rem">
+            <li style="cursor:default"><div class="check-box done"></div><span>Two Sum</span></li>
+            <li style="cursor:default"><div class="check-box done"></div><span>Subarray Sum = K</span></li>
+            <li style="cursor:default"><div class="check-box done"></div><span>LC-3 Sliding Window</span></li>
+            <li style="cursor:default"><div class="check-box done"></div><span>Rotten Oranges BFS</span></li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="font-size:0.75rem;color:var(--muted);margin-bottom:8px">O(n log n)</h3>
+          <ul class="checklist" style="font-size:0.78rem">
+            <li style="cursor:default"><div class="check-box done" style="background:var(--accent2);border-color:var(--accent2)"></div><span style="color:#94a3b8">Koko Bananas</span></li>
+            <li style="cursor:default"><div class="check-box done" style="background:var(--accent2);border-color:var(--accent2)"></div><span style="color:#94a3b8">Furthest Building</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Last-Minute Reminders</div>
+        <span class="tag tag-red">⚡ Critical</span>
+      </div>
+      <ul class="steps">
+        <li data-n="!">Always initialize <code>mp[0] = 1</code> for prefix sum problems</li>
+        <li data-n="!">Use <code>((sum%k)+k)%k</code> for negative mod safety</li>
+        <li data-n="!">For circular arrays: use index <code>i%n</code> or modular arithmetic</li>
+        <li data-n="!">Exactly K distinct = atMost(K) - atMost(K-1)</li>
+        <li data-n="!">Floyd's cycle: after meeting, reset one pointer to head</li>
+        <li data-n="!">Ceiling division: <code>(a + b - 1) / b</code></li>
+        <li data-n="!">BFS: mark visited on ENQUEUE not dequeue</li>
+        <li data-n="!">NGE II: push values (not indices) — only record ans when i &lt; n</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <hr class="divider" style="margin:32px 0">
+  <div style="font-family:'Orbitron',monospace;font-size:0.7rem;letter-spacing:0.2em;color:var(--muted);margin-bottom:24px;">
+    ▸ ADVANCED_PATTERNS // NEW CONTENT
+  </div>
+
+  <div class="star-card" style="border-color:rgba(0,255,136,0.35);background:linear-gradient(135deg,rgba(0,255,136,0.04) 0%,rgba(0,200,255,0.04) 100%);">
+    <div class="star-title" style="color:var(--green);text-shadow:0 0 12px rgba(0,255,136,0.4);">
+      🔋 Partition Array — Sum = Power of Two
+    </div>
+    <p style="color:#6a9ab0;font-size:0.9rem;line-height:1.7;margin-bottom:12px">
+      Partition the entire array into contiguous subarrays such that the sum of <em>each</em> subarray is a power of 2 (1, 2, 4, 8, 16…). Return true if possible.
+    </p>
+    <div class="insight">
+      <strong>Key Insight:</strong> This is a reachability problem. Think of each index as a node. You can "jump" from index i to j+1 if sum(i..j) is a power of 2. Ask: can you reach index N?
+    </div>
+    <div class="two-col" style="margin-top:16px;gap:16px">
+      <div>
+        <h3 style="font-size:0.65rem;letter-spacing:0.15em;color:var(--muted);margin-bottom:10px;font-family:'Share Tech Mono',monospace">BRUTE FORCE — O(2^N)</h3>
+        <div class="code-block"><span class="type">bool</span> <span class="fn">isPow2</span>(<span class="type">long long</span> n){
+    <span class="kw">return</span> (n><span class="num">0</span>) &amp;&amp; !(n&amp;(n-<span class="num">1</span>));
+}
+<span class="type">bool</span> <span class="fn">solve</span>(<span class="type">int</span> s, vector&lt;<span class="type">int</span>&gt;&amp; a){
+    <span class="kw">if</span>(s==a.size()) <span class="kw">return true</span>;
+    <span class="type">long long</span> sum=<span class="num">0</span>;
+    <span class="kw">for</span>(<span class="type">int</span> j=s;j&lt;a.size();j++){
+        sum+=a[j];
+        <span class="kw">if</span>(isPow2(sum) &amp;&amp; solve(j+<span class="num">1</span>,a))
+            <span class="kw">return true</span>;
+    }
+    <span class="kw">return false</span>;
+}</div>
+      </div>
+      <div>
+        <h3 style="font-size:0.65rem;letter-spacing:0.15em;color:var(--muted);margin-bottom:10px;font-family:'Share Tech Mono',monospace">OPTIMAL — O(N²) MEMOIZATION</h3>
+        <div class="code-block"><span class="type">int</span> memo[<span class="num">2001</span>]; <span class="cm">// init -1</span>
+
+<span class="type">bool</span> <span class="fn">solve</span>(<span class="type">int</span> s, vector&lt;<span class="type">int</span>&gt;&amp; a){
+    <span class="kw">if</span>(s==a.size()) <span class="kw">return true</span>;
+    <span class="kw">if</span>(memo[s]!=-<span class="num">1</span>) <span class="kw">return</span> memo[s];
+    <span class="type">long long</span> sum=<span class="num">0</span>;
+    <span class="kw">for</span>(<span class="type">int</span> j=s;j&lt;a.size();j++){
+        sum+=a[j];
+        <span class="kw">if</span>(isPow2(sum) &amp;&amp; solve(j+<span class="num">1</span>,a))
+            <span class="kw">return</span> memo[s]=<span class="num">1</span>;
+    }
+    <span class="kw">return</span> memo[s]=<span class="num">0</span>;
+}</div>
+        <div class="complexity" style="margin-top:8px">
+          <span class="cx cx-time">Time: O(N²)</span>
+          <span class="cx cx-space">Space: O(N)</span>
+        </div>
+      </div>
+    </div>
+    <div class="warn" style="margin-top:14px">
+      ⚠️ Use <code>long long</code> for <code>currentSum</code> always. Zeros can cause infinite loops — your index must always advance. If N ≤ 20: raw recursion fine. If N ≤ 2000: use memo. If N ≥ 10⁵: need greedy/O(N log N).
+    </div>
+  </div>
+
+  <div class="cards cards-2">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">0-1 BFS on Grids</div>
+        <span class="tag tag-blue">Deque BFS</span>
+      </div>
+      <p>Shortest path where edges have weight 0 or 1 — e.g., "minimum flips to make a path valid".</p>
+      <div class="insight">
+        <strong>Rule:</strong> weight=0 → <code>push_front</code>. weight=1 → <code>push_back</code>. This keeps the deque sorted by cost without a heap.
+      </div>
+      <div class="code-block"><span class="cm">// init dist matrix with INT_MAX</span>
+deque&lt;pair&lt;<span class="type">int</span>,<span class="type">int</span>&gt;&gt; dq;
+dq.push_front({<span class="num">0</span>,<span class="num">0</span>}); dist[<span class="num">0</span>][<span class="num">0</span>]=<span class="num">0</span>;
+
+<span class="kw">while</span>(!dq.empty()){
+    <span class="kw">auto</span> [r,c] = dq.front(); dq.pop_front();
+    <span class="kw">for</span>(<span class="kw">auto</span>&amp; d : dirs){
+        <span class="type">int</span> nr=r+d.first, nc=c+d.second;
+        <span class="type">int</span> w = (grid[r][c]==need)?<span class="num">0</span>:<span class="num">1</span>;
+        <span class="kw">if</span>(valid &amp;&amp; dist[r][c]+w &lt; dist[nr][nc]){
+            dist[nr][nc] = dist[r][c]+w;
+            <span class="kw">if</span>(w==<span class="num">0</span>) dq.push_front({nr,nc});
+            <span class="kw">else</span>    dq.push_back({nr,nc});
+        }
+    }
+}</div>
+      <div class="warn">⚠️ Always init <code>dist</code> to <code>INT_MAX</code>. For circular grids use <code>(r+dr+rows)%rows</code>.</div>
+      <div class="complexity">
+        <span class="cx cx-time">Time: O(V+E)</span>
+        <span class="cx cx-space">vs Dijkstra O(E log V)</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Binary Search — Split Array Largest Sum</div>
+        <span class="tag tag-purple">LC-410</span>
+      </div>
+      <p>Partition array into K subarrays to <em>minimize</em> the maximum subarray sum.</p>
+      <div class="insight">
+        <strong>Same as Koko Bananas pattern</strong> — binary search on the answer (the max allowed sum), then greedily check if K splits are enough.
+      </div>
+      <div class="code-block"><span class="type">bool</span> <span class="fn">canSplit</span>(vector&lt;<span class="type">int</span>&gt;&amp; a, <span class="type">int</span> mid, <span class="type">int</span> k){
+    <span class="type">int</span> cnt=<span class="num">1</span>, cur=<span class="num">0</span>;
+    <span class="kw">for</span>(<span class="type">int</span> x:a){
+        <span class="kw">if</span>(cur+x&gt;mid){ cnt++; cur=x; }
+        <span class="kw">else</span> cur+=x;
+    }
+    <span class="kw">return</span> cnt&lt;=k;
+}
+<span class="cm">// lo = max_element, hi = total sum</span>
+<span class="kw">while</span>(lo&lt;=hi){
+    <span class="type">int</span> mid=lo+(hi-lo)/<span class="num">2</span>;
+    <span class="kw">if</span>(canSplit(a,mid,k)){ans=mid;hi=mid-<span class="num">1</span>;}
+    <span class="kw">else</span> lo=mid+<span class="num">1</span>;
+}</div>
+      <div class="warn">⚠️ <code>lo</code> MUST start at <code>max_element</code> — not 0. If a single element > mid, canSplit breaks.</div>
+      <div class="complexity">
+        <span class="cx cx-time">Time: O(N log S)</span>
+        <span class="cx cx-space">Space: O(1)</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Sliding Window Maximum</div>
+        <span class="tag tag-amber">LC-239</span>
+      </div>
+      <p>Find the maximum in every sliding window of size K — in O(N).</p>
+      <div class="insight">
+        <strong>Monotonic Deque:</strong> Store indices (not values!) in a deque. Keep it decreasing. Pop from front when out of window, pop from back when smaller than current.
+      </div>
+      <div class="code-block">deque&lt;<span class="type">int</span>&gt; dq; <span class="cm">// stores indices</span>
+<span class="kw">for</span>(<span class="type">int</span> i=<span class="num">0</span>;i&lt;n;i++){
+    <span class="cm">// remove out-of-window</span>
+    <span class="kw">if</span>(!dq.empty() &amp;&amp; dq.front()==i-k)
+        dq.pop_front();
+    <span class="cm">// remove smaller elements</span>
+    <span class="kw">while</span>(!dq.empty() &amp;&amp; nums[dq.back()]&lt;nums[i])
+        dq.pop_back();
+    dq.push_back(i);
+    <span class="kw">if</span>(i&gt;=k-<span class="num">1</span>) res.push_back(nums[dq.front()]);
+}</div>
+      <div class="warn">⚠️ Store <strong>indices</strong> not values — it's the only way to check <code>i - k</code> (out-of-window eviction).</div>
+      <div class="complexity">
+        <span class="cx cx-time">Time: O(N)</span>
+        <span class="cx cx-space">vs PQ: O(N log K)</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Maximum XOR (Bitwise Trie)</div>
+        <span class="tag tag-red">Advanced</span>
+      </div>
+      <p>Find two numbers in an array whose XOR is maximum.</p>
+      <div class="insight">
+        <strong>Trie of bits:</strong> Insert all numbers bit-by-bit (MSB first). For each number, greedily pick the opposite bit at every level to maximize XOR. If the opposite child doesn't exist, take what's available.
+      </div>
+      <div class="code-block"><span class="kw">struct</span> <span class="type">Node</span> { <span class="type">Node</span>* links[<span class="num">2</span>]; };
+
+<span class="type">void</span> <span class="fn">insert</span>(<span class="type">int</span> num, <span class="type">Node</span>* root){
+    <span class="type">Node</span>* cur = root;
+    <span class="kw">for</span>(<span class="type">int</span> i=<span class="num">31</span>;i&gt;=<span class="num">0</span>;i--){
+        <span class="type">int</span> b=(num&gt;&gt;i)&amp;<span class="num">1</span>;
+        <span class="kw">if</span>(!cur-&gt;links[b])
+            cur-&gt;links[b]=<span class="kw">new</span> <span class="type">Node</span>();
+        cur=cur-&gt;links[b];
+    }
+}
+<span class="cm">// During query: try (bit ^ 1) first to maximize XOR</span></div>
+      <div class="warn">⚠️ For positive-only numbers, start from bit 30 (not 31) to skip the sign bit and save iterations.</div>
+      <div class="complexity">
+        <span class="cx cx-time">Time: O(N × 32)</span>
+        <span class="cx cx-space">Space: O(N × 32)</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</div>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function toggleCheck(el) {
+  el.classList.toggle('done');
+}
+
+window.addEventListener('load', () => {
+  document.querySelectorAll('.prog-fill').forEach(el => {
+    const w = el.style.width;
+    el.style.width = '0';
+    setTimeout(() => el.style.width = w, 100);
+  });
+});
+</script>
+</body>
+</html>
