@@ -68,10 +68,10 @@ function AuthorDashboard() {
       <div className="flex min-h-screen">
 
         {/* ── Sidebar ── */}
-        <aside className="w-64 flex-shrink-0 border-r border-[#e8e8ed] flex flex-col px-6 py-8 sticky top-0 h-screen">
+        <aside className="w-64 shrink-0 border-r border-[#e8e8ed] flex flex-col px-6 py-8 sticky top-0 h-screen">
           {/* Author identity */}
           <div className="flex items-center gap-3 mb-10">
-            <div className="w-10 h-10 rounded-full bg-[#1d1d1f] flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+            <div className="w-10 h-10 rounded-full bg-[#1d1d1f] flex items-center justify-center text-white text-sm font-bold shrink-0">
               {initials || '?'}
             </div>
             <div className="min-w-0">
@@ -177,7 +177,7 @@ function AuthorDashboard() {
                   </div>
 
                   {/* Status badge */}
-                  <span className={`flex-shrink-0 mt-1 text-[10px] font-semibold px-2.5 py-1 rounded-full ${
+                  <span className={`shrink-0 mt-1 text-[10px] font-semibold px-2.5 py-1 rounded-full ${
                     articleObj.isArticleActive
                       ? 'bg-[#34c759]/20 text-[#248a3d]'
                       : 'bg-[#ff3b30]/20 text-[#cc2f26]'
@@ -186,7 +186,7 @@ function AuthorDashboard() {
                   </span>
 
                   {/* Arrow on hover */}
-                  <span className="flex-shrink-0 text-[#a1a1a6] opacity-0 group-hover:opacity-100 transition-opacity mt-1 text-sm">→</span>
+                  <span className="shrink-0 text-[#a1a1a6] opacity-0 group-hover:opacity-100 transition-opacity mt-1 text-sm">→</span>
                 </div>
               ))}
             </div>

@@ -40,7 +40,7 @@ const UserRow = ({ user, onBlock, onUnblock, actionLoading }) => (
   <div className="flex items-center justify-between bg-[#f5f5f7] rounded-2xl px-6 py-4 hover:bg-[#ebebf0] transition-colors duration-200">
     <div className="flex items-center gap-4 min-w-0">
       {/* Avatar */}
-      <div className="w-10 h-10 rounded-full bg-[#e8e8ed] flex items-center justify-center flex-shrink-0 overflow-hidden">
+      <div className="w-10 h-10 rounded-full bg-[#e8e8ed] flex items-center justify-center shrink-0 overflow-hidden">
         {user.profileImageURL ? (
           <img src={user.profileImageURL} alt="" className="w-full h-full object-cover" />
         ) : (
@@ -56,7 +56,7 @@ const UserRow = ({ user, onBlock, onUnblock, actionLoading }) => (
         <p className="text-xs text-[#a1a1a6] truncate">{user.email}</p>
       </div>
     </div>
-    <div className="flex items-center gap-3 flex-shrink-0 ml-4">
+    <div className="flex items-center gap-3 shrink-0 ml-4">
       <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full ${
         user.isActive
           ? 'bg-[#34c759]/20 text-[#248a3d]'
@@ -97,7 +97,7 @@ const ArticleRow = ({ article, onToggle, actionLoading }) => (
         {article.author?.firstName} {article.author?.lastName} · {new Date(article.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
       </p>
     </div>
-    <div className="flex items-center gap-3 flex-shrink-0 mt-1">
+    <div className="flex items-center gap-3 shrink-0 mt-1">
       <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full ${
         article.isArticleActive
           ? 'bg-[#34c759]/20 text-[#248a3d]'

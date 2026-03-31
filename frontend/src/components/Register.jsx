@@ -66,7 +66,7 @@ function Register() {
                 ].map(({ value, label, icon }) => (
                   <label
                     key={value}
-                    className="flex-1 flex flex-col items-center gap-1.5 bg-white border border-[#d2d2d7] rounded-xl py-3 text-sm font-medium text-[#1d1d1f] cursor-pointer has-[:checked]:border-[#0066cc] has-[:checked]:bg-[#0066cc]/5 transition"
+                    className="flex-1 flex flex-col items-center gap-1.5 bg-white border border-[#d2d2d7] rounded-xl py-3 text-sm font-medium text-[#1d1d1f] cursor-pointer has-checked:border-[#0066cc] has-checked:bg-[#0066cc]/5 transition"
                   >
                     <input
                       type="radio"
@@ -138,7 +138,7 @@ function Register() {
               <label className={labelClass}>Profile photo</label>
               <div className="flex items-center gap-4">
                 {/* Avatar preview */}
-                <div className="w-14 h-14 rounded-full bg-[#e8e8ed] border border-[#d2d2d7] overflow-hidden flex items-center justify-center flex-shrink-0">
+                <div className="w-14 h-14 rounded-full bg-[#e8e8ed] border border-[#d2d2d7] overflow-hidden flex items-center justify-center shrink-0">
                   {preview
                     ? <img src={preview} alt="Preview" className="w-full h-full object-cover" />
                     : <span className="text-xl">👤</span>
