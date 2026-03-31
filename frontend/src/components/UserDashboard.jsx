@@ -62,7 +62,7 @@ function UserDashboard() {
       <div className="flex min-h-screen">
 
         {/* ── Sidebar ── */}
-        <aside className="w-64 flex-shrink-0 border-r border-[#e8e8ed] flex flex-col px-6 py-8 sticky top-0 h-screen">
+        <aside className="w-64 shrink-0 border-r border-[#e8e8ed] flex flex-col px-6 py-8 sticky top-0 h-screen">
 
           {/* Profile */}
           <div className="flex items-center gap-3 mb-10">
@@ -70,10 +70,10 @@ function UserDashboard() {
               <img
                 src={currentUser.profileImageURL}
                 alt="avatar"
-                className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                className="w-10 h-10 rounded-full object-cover shrink-0"
               />
             ) : (
-              <div className="w-10 h-10 rounded-full bg-[#0066cc] flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+              <div className="w-10 h-10 rounded-full bg-[#0066cc] flex items-center justify-center text-white text-sm font-bold shrink-0">
                 {initials || '?'}
               </div>
             )}
