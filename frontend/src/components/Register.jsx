@@ -17,17 +17,29 @@ function Register() {
 
   const onSubmit = async (formObj) => {
     setLoading(true)
+    setError(null)
+
     const formData = new FormData()
-    let { role, profileImageURL, ...userObj } = formObj
+    const { role, profileImageURL, ...userObj } = formObj
+
+    // Append all text fields
     Object.keys(userObj).forEach((key) => formData.append(key, userObj[key]))
-    formData.append("profileImage", profileImageURL[0])
+
+    // Only append image if a file was actually selected
+    const file = profileImageURL?.[0]
+    if (file) {
+      formData.append("profileImage", file)
+    }
 
     try {
       const endpoint = role === 'author'
         ? "http://localhost:4000/author-api/users"
         : "http://localhost:4000/user-api/users"
 
-      const resObj = await axios.post(endpoint, formData)
+      const resObj = await axios.post(endpoint, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+
       if (resObj.status === 201) navigate('/login')
     } catch (err) {
       setError(err.response?.data?.error || "Registration failed")
