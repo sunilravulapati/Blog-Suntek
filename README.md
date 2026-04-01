@@ -211,3 +211,6 @@ Role-based routing on the frontend is handled in the Zustand `authStore` — the
   isArticleActive: Boolean (default: true)
 }
 ```
+---
+###Video Demo: https://drive.google.com/file/d/1jf2EGYk4T1wFeGuU3p0Zwv3TSXMVkFLS/view?usp=sharing
+###Live Link: https://blog-suntek.vercel.app/
