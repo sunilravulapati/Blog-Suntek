@@ -41,16 +41,9 @@ function Register() {
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
-
-        {/* Brand */}
-        <div className="text-center mb-8">
-          <span className="text-2xl font-bold text-[#1d1d1f] tracking-tight">BlogApp</span>
-          <p className="text-sm text-[#6e6e73] mt-1">Create your account</p>
-        </div>
-
         {/* Card */}
         <div className="bg-[#f5f5f7] rounded-2xl p-8">
-          <h1 className="text-xl font-bold text-[#1d1d1f] tracking-tight mb-6">Get started</h1>
+          <h1 className="text-xl text-center font-bold text-[#1d1d1f] tracking-tight mb-6">Get started!</h1>
 
           {error && <div className={`${errorClass} mb-5`}>{error}</div>}
 
@@ -181,16 +174,14 @@ function Register() {
             >
               Create Account
             </button>
+            <p className="text-center text-sm text-[#6e6e73] mt-5">
+              Already have an account?{' '}
+              <NavLink to="/login" className="text-[#0066cc] hover:text-[#004499] font-medium transition-colors">
+                Sign in
+              </NavLink>
+            </p>
           </form>
         </div>
-
-        {/* Footer */}
-        <p className="text-center text-sm text-[#6e6e73] mt-5">
-          Already have an account?{' '}
-          <NavLink to="/login" className="text-[#0066cc] hover:text-[#004499] font-medium transition-colors">
-            Sign in
-          </NavLink>
-        </p>
       </div>
     </div>
   )

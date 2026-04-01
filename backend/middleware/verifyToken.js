@@ -26,14 +26,14 @@ export const verifyToken = (...allowedRoles) => {
             //forward
             next()
         } catch (err) {
-            //jwt.verify throws if token is invalid or expired
             if (err.name === "TokenExpiredError") {
                 return res.status(401).json({ message: "expired token" })
             }
             if (err.name === "JsonWebTokenError") {
                 return res.status(401).json({ message: "Invalid token" })
             }
-            //next(err);
+            // ALWAYS return a response or call next(err) if no conditions are met
+            return res.status(500).json({ message: "Authentication error" });
         }
     }
 }

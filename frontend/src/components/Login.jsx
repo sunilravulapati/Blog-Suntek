@@ -32,16 +32,9 @@ function Login() {
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
-
-        {/* Brand mark */}
-        <div className="text-center mb-8">
-          <span className="text-2xl font-bold text-[#1d1d1f] tracking-tight">BlogApp</span>
-          <p className="text-sm text-[#6e6e73] mt-1">Sign in to continue</p>
-        </div>
-
         {/* Card */}
         <div className="bg-[#f5f5f7] rounded-2xl p-8">
-          <h1 className="text-xl font-bold text-[#1d1d1f] tracking-tight mb-6">Welcome back</h1>
+          <h1 className="text-xl text-center font-bold text-[#1d1d1f] tracking-tight mb-6">Welcome back!</h1>
 
           {error && (
             <div className={`${errorClass} mb-5`}>{error}</div>
@@ -81,16 +74,14 @@ function Login() {
             >
               Sign In
             </button>
+            <p className="text-center text-sm text-[#6e6e73] mt-5">
+              Don't have an account?{' '}
+              <NavLink to="/register" className="text-[#0066cc] hover:text-[#004499] font-medium transition-colors">
+                Register
+              </NavLink>
+            </p>
           </form>
         </div>
-
-        {/* Footer */}
-        <p className="text-center text-sm text-[#6e6e73] mt-5">
-          Don't have an account?{' '}
-          <NavLink to="/register" className="text-[#0066cc] hover:text-[#004499] font-medium transition-colors">
-            Register
-          </NavLink>
-        </p>
       </div>
     </div>
   )
