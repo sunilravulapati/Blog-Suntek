@@ -38,29 +38,33 @@ function EditArticle() {
     setValue("content", article.content);
   }, [article]);
 
+  const BASE = "http://localhost:5000"
+
+  // update the article
   const updateArticle = async (data) => {
-  try {
-    const payload = {
-      ...data,
-      articleId: article._id,
-    };
+    try {
+      const payload = {
+        ...data,
+        articleId: article._id,
+      };
 
-    const res = await axios.put(
-      "http://localhost:4000/author-api/articles",
-      payload,
-      { withCredentials: true }
-    );
+      const res = await axios.put(
+        `${BASE}/author-api/articles`,
+        payload,
+        { withCredentials: true }
+      );
 
-    toast.success("Article updated!");
+      toast.success("Article updated!");
 
-    navigate(`/article/${article._id}`, {
-      state: { article: res.data.payload },
-    });
-  } catch (err) {
-    console.log(err);
-    toast.error(err.response?.data?.message || "Update failed");
-  }
-};
+      navigate(`/article/${article._id}`, {
+        state: { article: res.data.payload },
+      });
+    } catch (err) {
+      console.log(err);
+      toast.error(err.response?.data?.message || "Update failed");
+    }
+  };
+
 
   return (
     <div className={`${formCard} mt-10`}>

@@ -11,6 +11,7 @@ import {
   divider
 } from "../styles/common";
 
+//home page with features and all
 const features = [
   {
     icon: "✍️",
@@ -44,7 +45,7 @@ function Home() {
     <div className={pageBackground}>
       <div className={pageWrapper}>
 
-        {/* ── Hero ─────────────────────────────────────── */}
+        {/* Hero */}
         <section className="text-center py-16 mb-4">
           <span className={`${tagClass} mx-auto mb-4 block`}>Welcome to BlogApp</span>
 
@@ -83,7 +84,7 @@ function Home() {
 
         <div className={divider} />
 
-        {/* ── Features ─────────────────────────────────── */}
+        {/* Features */}
         <section className="py-14">
           <h2 className="text-2xl font-bold text-[#1d1d1f] tracking-tight text-center mb-10">
             Everything you need to read & write
@@ -107,7 +108,7 @@ function Home() {
 
         <div className={divider} />
 
-        {/* ── CTA ──────────────────────────────────────── */}
+        {/* CTA */}
         {!isAuthenticated && (
           <section className="text-center py-14">
             <h2 className="text-3xl font-bold text-[#1d1d1f] tracking-tight mb-3">

@@ -23,9 +23,11 @@ function AuthorArticles() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const BASE =  "http://localhost:5000"
 
   console.log("user in author profile",user)
   
+  //fetch the articles of the author
   useEffect(() => {
     if (!user) return;
 
@@ -33,7 +35,7 @@ function AuthorArticles() {
       setLoading(true);
 
       try {
-        const res = await axios.get(`http://localhost:4000/author-api/articles/${user._id}`, { withCredentials: true });
+        const res = await axios.get(`${BASE}/author-api/articles/${user._id}`, { withCredentials: true });
 
         setArticles(res.data.payload);
       } catch (err) {
@@ -47,12 +49,14 @@ function AuthorArticles() {
     getAuthorArticles();
   }, [user]);
 
+  //open the article when clicked by user/author
   const openArticle = (article) => {
     navigate(`/article/${article._id}`, {
       state: article,
     });
   };
 
+  //date format
   const formatDate = (date) => {
     return new Date(date).toLocaleString("en-IN", {
       timeZone: "Asia/Kolkata",

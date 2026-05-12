@@ -20,11 +20,12 @@ function UserDashboard() {
     navigate('/login')
   }
 
+  const BASE = "http://localhost:5000"
   useEffect(() => {
     async function getArticles() {
       setLoading(true);
       try {
-        let res = await axios.get("http://localhost:4000/user-api/users", { withCredentials: true })
+        let res = await axios.get(`${BASE}/user-api/users`, { withCredentials: true })
         setArticles(res.data.payload)
       } catch (err) {
         setError(err.message)
@@ -61,7 +62,7 @@ function UserDashboard() {
     <div className="min-h-screen bg-white">
       <div className="flex min-h-screen">
 
-        {/* ── Sidebar ── */}
+        {/* Sidebar */}
         <aside className="w-64 shrink-0 border-r border-[#e8e8ed] flex flex-col px-6 py-8 sticky top-0 h-screen">
 
           {/* Profile */}
@@ -113,7 +114,7 @@ function UserDashboard() {
           </button>
         </aside>
 
-        {/* ── Main ── */}
+        {/* Main */}
         <main className="flex-1 px-10 py-10">
 
           {/* Header */}

@@ -33,24 +33,40 @@ export const adminApp = exp.Router()
 //     res.status(200).json({ message: "articles:", payload: articlesList })
 // })
 
-//block user roles
+// block route
 adminApp.put('/block/:uid/adminId/:adminId', verifyToken("ADMIN"), adminCheck, async (req, res) => {
-    //get the user id and the admin id from the url
     let uid = req.params.uid
-    let adminId = req.params.adminId
-    //check if the user exists
     let user = await UserTypeModel.findById(uid)
-    if(!user || user.role !== "USER"){
-        return res.json({message:"user not found"})
+    //check if the user exists
+    if (!user) {
+        return res.status(404).json({ error: "User not found" })
     }
-    //update the isActive field in the user
-    let modifiedUser = await UserTypeModel.findByIdAndUpdate(
-        uid,
-        {$set:{isActive:false}},
-        {new:true}
-    )
-    //send the res
-    res.status(200).json({message:"user is blocked!"})
+    //check if the user is an admin or not
+    if (user.role === "ADMIN") {
+        return res.status(403).json({ error: "Cannot block an admin" })
+    }
+    //do the changes
+    await UserTypeModel.findByIdAndUpdate(uid, { $set: { isActive: false } }, { new: true })
+    //send response
+    res.status(200).json({ message: "User is blocked!" })
+})
+
+// unblock route
+adminApp.put('/unblock/:uid/adminId/:adminId', verifyToken("ADMIN"), adminCheck, async (req, res) => {
+    let uid = req.params.uid
+    let user = await UserTypeModel.findById(uid)
+    //check if user exists
+    if (!user) {
+        return res.status(404).json({ error: "User not found" })
+    }
+    //check if the user is an admin or not
+    if (user.role === "ADMIN") {
+        return res.status(403).json({ error: "Cannot unblock an admin" })
+    }
+    //do the changes
+    await UserTypeModel.findByIdAndUpdate(uid, { $set: { isActive: true } }, { new: true })
+    //send response
+    res.status(200).json({ message: "User is unblocked!" })
 })
 //unblock user roles
 adminApp.put('/unblock/:uid/adminId/:adminId',verifyToken("ADMIN"),adminCheck,async (req,res) => {

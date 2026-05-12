@@ -100,3 +100,1334 @@ element:
     <ProtectedRoute allowedRoles={['USER']}>
         <UserDashboard/>
     </ProtectedRoute>
+
+
+11000 - related to unique key error, mainly due to mongoose, though in rest the code is 409
+
+PUT AND PATCH:
+    put - complete change in the resource
+    patch - when partial changes are required
+
+CORS - cross origin resource sharing
+
+operations like filter,map,reduce create a new array-can be used for State
+operations like pop,push,splice,shift,unshift mutate the existing array - avoid using them
+
+for parameterised functions call them by a call back
+    onClick={()=>function(parameter)}
+
+
+delete:
+const delMark=(index)=>{
+    setMarks(marks.filter((_,i)=>i!==index))
+}
+
+Object.keys(),Object.values(),Object.entries() - they return an array of keys and values
+
+
+Form Handling in React
+in forms the button is of type='submit' which generates onSubmit on the whole form
+->react has the ability to handle form and do validation, but it is very verbose and time-consuming
+    react hook / formic
+
+REACT HOOK FORM - designed to validate and submit form in react
+install: npm i react-hook-form
+import {useForm} from 'react-hook-form'
+call the function: useForm() : this returns an object
+    const {register,handleSubmit} = useForm()
+
+-> in input element the name will act as the key as we are going to return an object
+->register every element to the useForm hook
+    register function will take the name of the input element - name attribute is not required
+
+    <input type = "text" {...register("username")} placeholder="username" id="un"/>
+
+to submit a form create a function
+    const submitForm=(o)=>{
+        clg(o)
+    }
+
+User Validation
+it is recommended to validate the users even in the frontend though we have designed a backend which validates the user
+->burden on the backend
+=>hackers can bypass all the validation rules so we need to have a backend validation as well
+=>whenever we create a unique then indexes are created!
+-> to make like this where we can receive a response like this field is mandatory we use the formState
+
+Conditional rendering
+ternary operator: condition ? react-el1 : react-el2=>similar to if else
+other way: condition && react-el1=> similar to if
+
+->during development mode, when the component is pure it will be rendered normally
+    this is due to StrictMode in main.jsx and will be rendered twice
+->in react there is only a relation b/w parent - child but no child - child 
+    for that lifting state up
+
+Lifting State Up
+
+->problems:
+    time taking
+    sometimes the parent that has received the state which is not the one who should receive this should pass it on and that logic should be written
+    if there are more than one level this becomes a bit inefficient
+->if single level - lifting state up else use redux
+
+#render - means prepare to display
+#fetch function is used to get api calls
+#usually rendering is like batch processing
+
+SIDE-EFFECTS
+external api calls, accessing/interacting with the dom(outside of react as react uses virtual dom)
+-> a component can render initially before displaying the content.
+-> if the component is about to make an api request it should wait until the initial rendering is completed
+-> only after the initial rendering should the component make an api request. if this happens together, it leads to unexpected bugs in the application
+We need to allow the component to make the initial rendering and then later only should api requests must be made
+
+useEffect - used to manage / handle the side effects
+useEffect(()=>{//effect function-outer functions},[//dependency function-optional])
+1. if there is no dependency array - useEffect(()=>{//effect function-outer functions})
+    this will run after every render
+2. if the dependency array is empty - useEffect(()=>{//effect function-outer functions},[])
+    this will only run after first initial render
+3. if there are dependencies - useEffect(()=>{//effect function-outer functions},[dependencies(states ex:counter or something else)-can be multiple])
+    this will run after every dependency change
+
+->disable the strict mode as it will render the component twice.......this is done so that to check if there are any errors.....during development we should disable it so that we get to know 
+correctly how many times the component should render.
+
+2/3/26
+ROUTING
+->before we start the routing.....we should decide the root layout
+=>root component : App.jsx and root layout is the layout which we want
+=>react doesnt have internal routing application, for that we have an external one react router
+    npm i react-router(before v7), npm i react-router-dom(before v7)
+    npm i react-router(in v7 both of them are combined)
+->since the main layout is going to be the placeholder for the components in the header/nav bar use the Outlet from react-router to make the main section as the placeholder
+->then create the components you want
+->configure the routing for the above created components - connecting the components to its parent/parents with a path
+    use the root component to do routing
+    there is a module named createBrowserRouter from 'react-router' which creates the routing
+        const routingObj = createBrowserRouter() //this creates and returns an routingObj object
+        then use the RouterProvider component which takes the value router = {routingObj}
+=>whenever the application starts we must load the rootLayout then the home should load
+    every routingObj contains two properties: path and element
+        const routingObj = createBrowserRouter([{
+            path:"/",
+            element:<RootLayout/>,
+            children:[
+                {
+                path:"/",
+                element:<Home/>
+                },
+                {
+                path:"register",
+                element:<Register/>
+                },
+                {
+                path:"login",
+                element:<Login/>
+                },
+                {
+                path:"tech",
+                element:<Tech/>
+                }
+            ]
+        }])
+
+-> use NavLink from react-router 
+    because with anchor tag the entire page will refresh , it automatically creates an hyperlink , it dynamically adds an active class to it
+    <NavLink to=""></NavLink>
+->          {
+              path:"",
+              element: <Navigate to="java"/>
+            }
+    with this we can decide what we want to load - it can solve the white page issue
+    import Navigate from the react-router
+
+->at each component level we must use Outlet so that whatever children there are, their content will be displayed
+
+=>        <li><NavLink to="/" className={({ isActive }) => isActive ? "text-white" : "text-black"}>Home</NavLink></li>
+            this makes sure that it is clear for the users that they are in this particular component like head, productslist or contact us page
+
+->PROGRAMATIC NAVIGATION | MANUAL NAVIGATION
+To implement we have to import a special useNavigate hook which is a function that helps us to navigate, it returns a function, we must porvide the path to this
+const navigate = useNavigate()
+
+  // navigate to product component
+  const gotoProduct=()=>{
+    navigate('/products')
+  }
+
+  then use onclick function and call this function if the funciton is parameterised then call it directly by its name, else use a call back function and call it
+
+
+  // navigate to product component
+  const gotoProduct=(productObj)=>{
+    // navigation logic
+    // while navigating, transfer the product object as well
+    navigate('/products',{state:{product:productObj}})
+  }           path         state object which has key as product and its value is the product object
+
+useLocation() //in react-router: when a component is loaded it will check what was the last component that was used. example: location object in windows
+        ->it knows who has sent the data and we can easily use it
+        const {state} = useLocation()
+        // console.log(state?.product)
+
+//productlist.jsx
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router'
+
+function ProductsList() {
+  const { register, handleSubmit } = useForm();
+
+  let [products, setProducts] = useState([])
+  let [loading, setLoading] = useState(false)
+  let [error, setError] = useState(null)
+  let [filteredProductData, setFilteredProductData] = useState([]) //searched products data - could be either by title or by category
+  const navigate = useNavigate()
+
+  // navigate to product component
+  const gotoProduct = (productObj) => {
+    // navigation logic
+    // while navigating, transfer the product object as well
+    navigate('/products', { state: { product: productObj } })
+  }
+
+  useEffect(() => {
+    setLoading(true)
+    async function getProducts() {
+      try {
+        let res = await fetch('https://fakestoreapi.com/products')
+        if (res.status === 200) {
+          // extract the json data from the response
+          let productsData = await res.json()
+          // update the state
+          setProducts(productsData)
+          setFilteredProductData(productsData)
+        }
+        else {
+          throw new Error('failed to fetch the products data')
+        }
+      } catch (err) {
+        setError(err.message)
+      }
+      finally {
+        setLoading(false)
+      }
+    }
+    getProducts()
+  }, [])
+
+  if (loading === true) {
+    return <p className='text-center text-2xl text-blue-300'>Loading.....</p>
+  }
+  if (error !== null) {
+    return <p className='text-center text-2xl text-red-500'>Error: {error}</p>
+  }
+
+  // const searchProductByTitle = (formDataObj) => {
+  //   // get the input field data
+  //   let searchTerm = formDataObj.searchInput.toLowerCase();
+  //   // if it is empty then set the products to display all the products
+  //   if (searchTerm.trim() === '') {
+  //     setFilteredProductData(products)
+  //     return
+  //   }
+  //   // console.log(searchTerm)
+  //   // filter by title
+  //   let filtered = products.filter((productObj) => productObj.title.toLowerCase().includes(searchTerm))
+  //   // set the filtered data
+  //   setFilteredProductData(filtered)
+  // }
+
+  // const searchProductByCategory = (formDataObj) => {
+  //   // get the input field data
+  //   let searchTerm = formDataObj.searchInput.toLowerCase();
+  //   // if it is empty then set the products to display all the products
+  //   if (searchTerm.trim() === '') {
+  //     setFilteredProductData(products)
+  //     return
+  //   }
+  //   // filter by category
+  //   let filtered = products.filter((productObj) => productObj.category.toLowerCase() === searchTerm)
+  //   // set the filtered data
+  //   setFilteredProductData(filtered)
+  // }
+
+  // combined function
+  const searchProduct = (formDataObj) => {
+    // get the input field data
+    let searchTerm = formDataObj.searchInput.toLowerCase();
+    // if it is empty then set the products to display all the products
+    if (searchTerm.trim() === '') {
+      setFilteredProductData(products)
+      return
+    }
+    // filter by category
+    let filtered = products.filter((productObj) =>
+      productObj.title.toLowerCase().includes(searchTerm) ||
+      productObj.category.toLowerCase() === searchTerm //includes() checks for substring match, not exact match. dont use it for category
+    )
+    // set the filtered data
+    setFilteredProductData(filtered)
+  }
+
+  //sort by price
+  const filterByPrice = (dropDown) => {
+    // create a copy of the filteredProducts and do operations on that
+    let copy = [...filteredProductData]
+    // check the dropdown by the option id
+    if (dropDown === 'low') {
+      // ascending order lesser - larger
+      copy.sort((a, b) => a.price - b.price) //sorts the array in place, returns either -neg,positive or zero
+    }
+    else if (dropDown === 'high') {
+      // descending order larger - lesser
+      copy.sort((a, b) => b.price - a.price)
+    }
+    setFilteredProductData(copy)
+  }
+  return (
+    <div>
+      {/* search by product category */}
+      {/* search form field with a placeholder and a button */}
+      {/* once the use clicks the button then implement a filter function to filter out by category and return the result */}
+      <div className="flex justify-center items-center">
+        <form
+          onSubmit={handleSubmit(searchProduct)}
+          className="flex gap-3 mt-10"
+        >
+          <input
+            type="text"
+            placeholder="enter the product category/title"
+            {...register('searchInput')}
+            className="border rounded px-3 py-2"
+          />
+          <button type="submit" className="border rounded bg-gray-300 px-4 py-2">Search 🔎</button>
+          <select onChange={(e) => filterByPrice(e.target.value)} className="border rounded bg-gray-200 px-3 py-2">
+            <option value="">Select</option>
+            <option value="low">Low to High</option>
+            <option value="high">High to Low</option>
+          </select>
+        </form>
+      </div>
+
+      <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-12 mt-10'>
+        {/* products list */}
+        {
+          filteredProductData.length === 0 ? (
+            <p className='text-red-500 text-center'>
+              No product found!
+            </p>
+          ) : (
+            filteredProductData.map((productObj) => (
+              <div
+                onClick={() => gotoProduct(productObj)}
+                key={productObj.id}
+                className='shadow-md rounded-3xl p-10 text-center cursor-pointer bg-gray-100'
+              >
+                <img
+                  className="h-40 object-contain block mx-auto mb-10"
+                  src={productObj.image}
+                  alt={productObj.title}
+                />
+                <h2>{productObj.title}</h2>
+                <p className='text-green-400'>${productObj.price}</p>
+              </div>
+            ))
+          )
+        }
+      </div>
+    </div>
+  )
+}
+
+export default ProductsList
+
+
+// sortByPrice:
+// JavaScript's .sort() method rearranges elements of an array.
+// It expects a comparison function that returns:
+//   - negative value → a comes before b
+//   - positive value → b comes before a
+//   - 0              → keep order unchanged
+//
+// Since price is numeric, we use subtraction:
+//   a.price - b.price  → ascending
+//   b.price - a.price  → descending
+//
+// Important: .sort() mutates the original array,
+// so we create a copy using [...filteredProductData]
+// before sorting to avoid mutating React state.
+
+TailwindCSS intellisense
+-> npm i tailwindcss @tailwindcss/vite
+-> in vite.config.js:
+    import { defineConfig } from 'vite'
+    import react from '@vitejs/plugin-react'
+    import tailwindcss from '@tailwindcss/vite'
+
+    // https://vite.dev/config/
+    export default defineConfig({
+      plugins: [react(), tailwindcss()],
+    })
+-> in index.css: @import 'tailwindcss';
+->close vscode and then open it again
+
+STATE MANAGEMENT
+lets say there are 20 components all of them depending on state 'x' if the x is changed then the change needs to be broadcasted to all the components of the application
+=>lifting state up / prop-drilling good for only single level one
+->it means sharing the state across the application and achieve sync in state across the application
+=>context api (solves the prop drilling) - small / medium applications
+    we create a separate place named context provider and store the state(it exists outside the component tree) and the components will hence becomes context consumers
+    now the components can directly take the state from the context provider
+3/3/26
+  STEPS
+  ->create a context object
+  ->immediately react will provide: context provider(used to provide state through context object) and context consumer(components consume the state through context object)
+  ->a component can consume the state of context provider with useContext hook
+
+=>create a folder in the src named 'contexts'(everything related to context must be placed in this folder) and then create a js file named 'CounterContext.js'
+//create a context object
+    import {createContext} from 'react'
+    export const CounterContext = createContext() //context is like a channel,it does not have any state by its own, it just passes the state
+//then create a 'CounterContextProvider.jsx' in the same folder
+    import {useState} from 'react'
+    import {CounterContext} from './CounterContext'
+
+    function CounterContextProvider({children}){
+      //state
+      const [counter1,setCounter1] = useState(1)
+      //function to modify state
+      const changeState=()=>{
+        setCounter1(counter1+1)
+      }
+      //return
+      return (
+        <CounterContext.Provider value={{counter1,changeState}}>
+          {children}
+        </CounterContext.Provider>
+      )
+    }
+=>wrap the root component with the CounterContextProvider, the root component(App is in main.jsx)
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.jsx'
+import CounterContextProvider from './contexts/CounterContextProvider.jsx'
+
+createRoot(document.getElementById('root')).render(
+    {/* wrap root component with provider */}
+    <CounterContextProvider>
+      <App />
+    </CounterContextProvider>
+)
+
+=>every components can consume the state from the context provider by using useContext hook and context object
+
+import {useContext} from 'react'
+import { CounterContext } from '../contexts/CounterContext'
+function A() {
+  //state
+  let {counter1,changeState} = useContext(CounterContext)
+  console.log("component A rendered")
+  return (
+    <div className='bg-amber-200 shadow-md text-center'>
+      <p className='p-10'>Component A</p>
+      <p>Counter1: {counter1}</p>
+      <button onClick={changeState}>Click me</button> {/* now whatever component have done any change to the state then those changes will be broadcasted to all the currently connectly components */}
+    </div>
+  )
+}
+
+export default A
+
+when we check the console after clicking the submit then all the state connected components will render
+->react considers that even whatever is changed that is an object, so even if any component doesnt use all the counter facilities it will be rendered.
+->solution to this is 
+
+IMPORTANT: keep only one state in one context, otherwise it will lead to unnecessary rendering which affects the performance,
+            solutions: create a new context for new states, else use redux or zus-stand
+
+=>redux / zus-stand () - high level applications
+
+9/3/26
+ZUS-STAND
+Advanced state management tools: redux(lot of boilerplate code) and zustand(simple to learn),though both of them are quite same
+
+zustand
+->we are going to create a global store and in that we are going to add the state which is needed by the components(dont keep the states that are not required)
+->if the state is modified by one of the components then the change is broadcasted to all the components that use this state
+
+STEPS:
+1. install zustand : npm i zustand
+2. create a global store, in src create a folder named 'store'
+3. inside that folder create a file with a meaning-full name
+4. import {create} from 'zustand'
+    //create store
+    export const useTest = create((set)=>()) //this creates a custom hook
+    #create(()=>({})) // we have to return an object
+    difference between ()=>{} and ()=>({}) is that the first one is the definition of the function but the second one is going to return us an object
+
+    create((set)=>({
+      //state
+      x:10,
+      //function to modify that state
+      incrementX:()=>set(state=>({x:state.x+1}))
+    }))
+
+    dont directly call the useTest hook, always extract the state that you want individually
+    if there are multiple states, then with zustand extract the states that are needed by the components then whenever changes to those states are done then other components that didnt need a particular state wont be rendered!
+
+    we can also pass external values to the store
+    incrementXByValue: (val) => set(state => ({ x: state.x + val })),
+
+    TestStore.js
+    import { create } from 'zustand'
+    //create store
+    export const useTest = create((set) => ({
+        //state
+        x: 10,
+        y: 20,
+        user:{
+            name:"Vikas",
+            age:21
+        },
+        //function to modify that state
+        incrementX: () => set(state => ({ x: state.x + 1 })),
+        decrementX: () => set(state => ({ x: state.x - 1 })),
+        incrementY: () => set(state => ({ y: state.y + 1 })),
+        incrementXByValue: (val) => set(state => ({ x: state.x + val })),
+        updateUser: (newName) => set(state=>({user:{...state,name:newName,age:19}}))
+    })) //this creates a custom hook
+
+#react uses virtual dom(a copy of the real dom is created and changes are done to that,stored in the memory) while angular uses incremental dom
+#for large scale applications use angular
+#component is the reusable piece which is just like a function, whenever the component is changed it is re-rendered(this is like function which is called multiple times)
+
+useRef Hook: use reference hook
+->this is used to access the reference of the real dom directly
+=>reason this is used: if some action needs to happen instantly(improve the user experience), if we want to maintain few previous values, sometimes when changes occur then the component should not render
+->ref is one of the attribute which can be used to connect the reference elements
+      <input ref={inputRef} type="text" />
+code:
+  let inputRef = useRef(null)
+  useEffect(()=>{
+    //side effect
+    inputRef.current.focus()
+  }, [])
+  <input type="text" ref={inputRef}/>
+
+#function in js are first class objects: can be stored in a variable(function expression), can be sent as an argument(callback),can return another function(least used)
+  reason: js supports both oop and functional oriented programming
+  ->function without any function name is an anonymous function
+  ->during the function execution the things that were defined they will stored in the memory(stack) and after the execution of function they are removed from the stack
+  ->sometimes the function can remember the previous values this is due to closure
+
+Closure in JS
+->function with its surrounding states is the closure, this is the default property in js
+->what happens is: whenever a function execution is done, the things in function(which returns another function), will be removed from the callstack and temporarily is stored in heaps(heaps usually store reference types) by the js engine.
+  ex:
+    function increment(){
+      let counter = 0;
+      return function(){
+        counter++;
+        return counter;
+      }
+    }
+    let x = increment() // this now becomes a function which returns the inner function
+    console.log(x()) // terminal: 1
+    //counter variable inside the increment function is local that function, whenever the inner function is executed it uses the counter variable
+
+REST PARAMETERS
+function sum(a,b){
+  return a+b
+}
+getSum(10,20,30,40) // in other languages this causes an error but in js what happens is that it just takes in the needed parameters and returns the result
+
+->two ways: pass the values as an single array, but we dont use this as it could spoil the user experience
+          other way is to make a rest parameter
+          function sum(...a){ // ...a is the rest parameter, this can receive any no. of arguments and packs them into an array
+            console.log(a) // output: [10,20,30,40]
+            return a.reduce((x,y)=>x+y)
+          }
+          getSum(10,20,30,40)
+          ->never place a normal parameter after the rest parameter, always the rest parameter must be placed at the end
+
+Controllers:
+whatever request handlers are there to an api route and we keep that in a normal variable, that is a Controller
+
+before:
+app.get(path,(req,res)=>{}) // api route
+
+after:
+const getUsers = (req,res)=>{} // controller
+app.get(path,getUsers) // api route
+
+#in some other applications
+app.routes.js
+ |    |     |
+file what  extension
+     is done  
+<!-- block: occupies the entire available width -->
+    <!-- only for block elements the width and height css properties will work -->
+    <h1>Lorem ipsum dolor sit amet.</h1>
+    <!-- inline: occupies the required width only -->
+    <!-- width and height will only work when display property is changed to either inline-block or block! -->
+    <a href="#">Link!</a>
+    <a href="#">Link!</a>
+    <img src="../assets/chennai.webp" alt="chennai">
+
+
+h1{
+    width: 600px;
+    height: 300px;
+}
+
+a{
+    display: inline-block;
+    width: 600px;
+    height: 300px;
+}
+/*img is an inline but gets modified */
+/* img{
+    width: 800px;
+} */
+
+<h1>Lorem ipsum dolor sit.</h1>
+    <!-- two ways to align the image to the center of the page -->
+    <img src="../assets/chennai.webp" alt="chennai">
+    <div>
+        <img src="../assets/bangalore.webp" width="200px" alt="bangalore">
+    </div>
+
+
+/* cancel  the default padding and margin / reset the default properties */
+*{
+    margin:0;
+    padding:0;
+    /* if we want everything to be within the specified width we have to use box-sizing which makes everything within and the default is content-box...change it to border-box */
+    box-sizing: border-box;
+}
+
+->every element of html is a box
+->every browser contains the user agent stylesheet......this provides the default styling
+->always reset the margin and padding
+
+BOX MODEL
+padding is the space that is internal to the element
+margin is the space that is external to the element
+
+CSS Positions
+by default every element's position is static
+if it is not static then it is a positioned element
+top,left,right,bottom -> can take both positive and negative values
+there are three: static, 
+                 relative - relative to the previous position,it will stay in the document flow
+                 absolute - element is removed from the document flow and the element floats, the position is relative to its positioned parent,
+                            checks for the parent's parent and so on.... if a match is there then according to that parent else it will match the body of the document
+                 fixed - fixed and is relative to the viewport
+                 sticky - 
+
+BreakPoints
+when a specific breakpoint is breached then we must style it so that the elements are adjusted accordingly for this we use media queries
+
+MEDIA QUERIES
+syntax:
+@media media-type operator (media feature) {/*css styles*/}
+------ ---------- --------
+       screen     and,not,or,in
+       print
+       speech
+       all
+
+
+->root of the document in any is the html tag
+
+UNITS
+->for text dont use px(pixels),it will not adjust to the browser settings
+->use em or rem, 1em = 1*fontsize of the parent, it adjusts to the browser's font settings,rem = fontsize of the root element
+->majorly use the rem unit, in the cases to use the fontsize of the parent then we can use the em
+->this em or rem can also be used for others as well
+-> %(percent) => depends on the parent element's width
+-> vw(viewport width) and vh(viewport height) => depends on the viewport/ the current screen
+
+
+LAYOUT
+->every web page has a layout/structure
+->flexbox / grid / flexbox-grid
+-> with minimal lines of code we can make a good responsive web site
+->with flexbox we can align items either horizontally or vertically, this is resolved by grid layout
+1. make the parent as a flex container
+2. and create flex items and all
+
+1. make the parent as the grid container
+2. each element now occupies as block
+3. decide how many rows and columns are needed
+4. inform the grid where to place the items
+
+CSS FRAMEWORKS
+Bootstrap and TailwindCSS
+component first approach - Bootstrap
+utility first approach - TailwindCSS
+
+preflight: resets the default css for few tags to provide more customisation ability
+there is no need to provide media queries in TailwindCSS
+
+TailwindCSS installation
+1. install the tailwindcss extension from vs code and create a package.json file: npm init -y
+2. npm i tailwindcss @tailwindcss/cli
+3. create the style.css file and import the '@import "tailwindcss" '
+4. run the command: "npx @tailwindcss/cli -i ./style.css -o ./output.css --watch": this creates an output.css file which is not for the developer to do any changes,
+->what this output.css does is: tailwind css has pre defined utilities....there background working will be in the output.css file and our normal browsers dont have any tailwindcss parser so this output.css tells the browser to do the styling
+5. create a html file and add <link href="./output.css" rel="stylesheet">
+
+23/2/26
+
+->any html document is converted to a tree of js objects(dom)....so that it is programmable
+    like: document
+            |_html
+                |_head
+                |_body
+->whenever the browser receives the html then the html doc is converted to a dom and then css parser comes in play....what happens is
+    browser views the dom tree and accordingly acts like if there is any css to be applied then the css parser comes to play and so on
+->every element in html is like a string
+
+IMPERATIVE APPROACH
+->script element is used to connect js files to the html......written just before the closing body tag
+    <script src="file_name.js"></script>
+#REASON FOR ITS POSITION - js execution takes time.....so we let the frontend to be shown first and later let the js be executed
+->for reading the elements we use the query selector on that document object
+    let element = document.querySelector('h2')
+    =>inside the parenthesis we can include either tag or class or id
+    =>if we want to see the text content we can use the textContent
+        element.textContent
+        =>we can change this as well
+            element.textContent = "hello"
+->to add an event listener we use the addEventListener which takes two arguements:type of event and the function(for any changes/what should occur once that event has happened)
+    btn.addEventListener('click',()=>{
+        element.textContent = "Hello World!"
+        element.style.color = "red"
+        element.style.fontSize = '5rem'
+    })
+
+=>  // read all form elements
+    let form = document.querySelector("form")
+    let usernameInput = document.querySelector("#username")
+    let passwordInput = document.querySelector("#password")
+    let submitbtn = document.querySelector(".sb")
+
+    // add form submit event listener
+    submitbtn.addEventListener('submit',(e)=>{
+        e.preventDefault() // prevents auto page reload
+        // read values of input elements
+        let username = usernameInput.value
+        let password = passwordInput.value
+        console.log({username,password})
+    })
+-> to create a new element use createElement('tag_name'), to add content use textContent and to append the created element then use
+    appendChild(createdElement)
+    ex: let parent = document.querySelector(".parent")
+        let newChild = document.createdElement('p')
+        submitbtn.addEventListener('submit',(e)=>{
+            newChild.textContent = "something"
+            parent.appendChild(newChild)
+        })
+JQUERY- direct dom manipulations
+=>what happens is whenever we do any changes then only dom is changed but no changes to the original file
+
+DECLARATIVE APPROACH - react js
+->it is a js library
+->with this we can make single page applications(SPA)
+# in multi page applications what happens is for every request the server will respond with a html page .... this  leads to performance issues and always a new dom is generated
+    ->amazon is a multi page application
+# now instead of this we use single page
+    =>during the first request the browser will download the entire frontend and from the next requests(AJAX - fetch function is used,response is json) 
+      only json data can be sent.
+    =>because of this no new dom will be created but instead the dom itself is changed
+    =>results in high performance
+
+->react never touches the actual dom, instead it maintains a virtual dom and does changes to it....
+
+->when does the data get inserted and validated is when the save() is called or when we use insertOne(),insertMany() methods.
+->validators will only work while insertion, for them to work even in updations we have to add runValidators: true them
+->we will have to provide default error handling middleware, when some error occurs then express will invoke this middleware....else we had to have a lot of try catch blocks
+
+
+PROJECTIONS: retrieving the fields that we want
+->field level filtering
+->find({},{username:1,age:1})
+->object id will be shown automatically........ to not project it find({condition},{username:1,_id:0,age:1})
+
+Unique property
+->this is used to add uniqueness to fields
+->sometimes there will be no object id(though mongodb provides it, not a lot of the other services show us the object id for our accounts).......and also identifying which user is difficult.....to resolve this we add a unique property
+->
+
+
+Saving Password
+->rule of thumb: whenever we are saving password dont make them be stored as a plain text
+->two ways: encryption(this is reversible, if the key is known then it is an issue), hashing(irreversible, once hashed we cant even unhash it)
+->only hashed passwords must be stored in the database
+->tool: bcrypt hash online generator
+->module: bcryptjs
+-> import {hash} from 'bcryptjs'
+    //hash password
+    let hashedPassword = await hash(req.body.password,12) // 12 means cost factor
+    //replace the password
+    newUserDoc.password = hashedPassword
+
+
+Authentication
+->every api has two routes: public route and protected routes
+->routes accessible by everyone/any user: public routes, routes accessible to authenticated users: protected routes
+->by default every route is public route........if we add security then only we can make it protected route
+->user authentication(technical term) / user login(simple term) means submitting credentials and getting tokens....it is same as pay the amt and get the ticket
+->once the token is received by the user then he/she is an authenticated user
+->steps
+    1. UserAPI gets the post request
+    2. verify the username
+    3. if they matched, then compare the plain password with hashed password
+    4. if the passwords match, create a JWT(JSON WEB TOKEN) token / generate an encrypted token
+    5. sends the token to client app / send response back to the client
+
+JSON WEB TOKEN(JWT)
+->once the user creds are verified, then the login route creates a jwt token
+->npm i jsonwebtoken
+->expiresIn: 10(secs) / "10d" / "1w" -> usually gmail,facebook gives the token for 7 days but bank apps give it for 1 min only
+
+
+=>authenticated users and authorised users are not same: once authentication is done then only we can authorize the users
+
+level 400:
+400 - bad request
+401 - unauthorised
+404 - not found
+
+
+Storage of token in browser
+tokens can be stored in local storage,session storage and cookies
+=>local and session storage content can be accessible by js of the browser.
+=>In local storage and session storage tokens can be read easily through browser(localStorage.getItem(key)) which endangers - easy to access and prone to hackers
+=>normal cookie can also be accessible by js of the browser
+=>http only cookies cant be accessible to the js of the browser. so this is the safest place to store jwt token after user authentication
+=>cookies - browser can also read if we dont check httponly, once it is checked the tokens cant be accessed by browser.....accessible to only server
+
+
+Making Authenticated Requests
+->when client application makes request after successful login, the httponly cookie will be attached to every request automatically
+->the middleware in express can extract the cookie from request using cookie-parser module
+
+
+Asynchronous Javascript
+
+->js is a single threaded programming language
+->a thread can do one task at a time
+->browser js run time = js engine + web apis + event loop
+->node js run time = js engine + node apis + event loop
+
+->clg is non blocking
+-> all loops in js execute synchronously
+->these web apis or node js apis have multiple threads
+->setTimeout method is like java's sleep method , it takes two arguments one is the callback function and the other one is the timeOut time in ms, it executes Asynchronously
+->non-blocking Asynchronous / blocking Asynchronous / blocking synchronous / non blocking synchronous -> every instruction is done by the js engine
+
+setTimeout(() => {
+    clg("skdjfa")
+},5000)
+what is happening here is any statement before the setTimeout will be executed by the js engine.........when the turn is for the setTimeout then the js engine will hand over this to node js apis which is going to wait for the 5secs and then the event loop is called which is going to call the callback function which is going to send the result back to js engine
+->synchronous blocking 
+->synchronous non blocking 
+->Asynchronous blocking 
+->Asynchronous non blocking 
+
+Timer Functions
+setTimeout(() => {},t)
+setInterval(()=>{},t)
+
+->delayed actions, otp,auto logout/session timeout,polling/auto refresh data
+->they execute asynchronously
+
+Promises
+there are three states
+->pending is the first state, until a result is done then only we move to fulfilled or rejected state
+->two party's are involved in a Promise
+->there are two ways to consume a promise: then and catch : (old) , async and await : (new)
+
+
+->json = js object notation, this is a nuetral data format which can be understood by any technology
+->xml is also a neutral data format which is used to transfer data, this is not used nowadays as json is being used
+
+
+API(Application Program Interface)
+->apis communicate with each other by exchanging json
+REST API - REpresentational State Transfer API
+Endpoints: it is a url where your api can be accessed to perform specific operations on resources
+ex: http:localhost:3000/users/123
+    /* base url      *//*Endpoint*/
+Endpoint rules: 1. Use nouns + http methods, not verbs
+                    ex: GET /users
+                2. Use plural nouns
+                3. Use lowercase and  hyphens
+                    ex: GET /user-profiles
+
+
+NodeMon: nodemon is used to automate....whenever we are making changes...we have to restart our server, for this we use nodemon
+        install: npm install -g nodemon
+
+-> only post and put request contains the body
+
+
+->express contains few middlewares: one of them is app.use(exp.json())
+->creation of custom middleware:
+    function middleware1(req,res,next){ //next is for forwarding the request to the next
+        //receive a request,handle and send responses
+        console.log("middleware1 executed")
+    }
+
+
+
+data - processed info is data 
+data vs information
+database - storage space for storing data
+db server 
+dbms
+
+
+mongodb uses bson - binary json
+mongodb operations
+create : db.collection_name.insertOne({}),insertMany([{}])
+update : db.collection_name.updateOne(condition,new),updateMany(condition,[{}])
+read : db.collection_name.findOne(condition) - first one in collection or find only one(ex : db.firstone.findOne({name:{$eq:"vikas"}})
+) , find() - all
+delete : db.collection_name.deleteOne(condition),deleteMany(condition)
+
+
+db.firstone.findOne({name:"vikas"}) - only for equality
+
+Query comparison operators: $eq,$neq,$gt,$gte,$lt,$lte,$in,$nin
+
+31 jan
+
+{
+  _id: ObjectId('697d80253b1fe9761c2391f0'),
+  eno: 100,
+  name: 'ravi',
+  skills: [
+    'js',
+    'css',
+    'react'
+  ],
+  address: {
+    city: 'hyd',
+    pincode: 500026
+  }
+}
+
+->whenever we are trying to read nested documents(in js it is objects)
+  db.emp.findOne({"address.city":"hyd"})
+->whenever we want to read something from an array
+  db.emp.findOne({skills:"js"}) -> use this only for single element comparison
+->db.emp.findOne({skills:["js","react"]}) -> will not work as it will assume the array and try to find it and also if the 
+  order is not same then it will return null as the output
+->whenever we searching for multiple then we should use $all(used for arrays mainly)(this helps even if the order is not same!)
+  ex: db.emp.findOne({skills:{$all:["js","css"]}})
+  $in can also be used when we are trying to compare not only for arrays
+->db.emp.updateOne({eno:100},{$set:{name:"ravi kumar"}})
+->db.emp.updateOne({eno:100},{$set:{"address.street":"r1"}}) -> if there is a street property then the value is changed else it will be added
+->$set is used to add or update a property(top level or nested)
+->to delete a property we use $unset
+  db.emp.updateOne({eno:100},{$unset:{name:""}})
+  db.emp.updateOne({eno:100},{$unset:{"address.pincode":""}})
+->array update operators: $addToSet : adds new if not exists,$push : adds even if it exists
+                          $each : add multiple ex:db.emp.updateOne({eno:100},{$push:{skills:{$each:["nodejs","java"]}}})
+                          $pop : remove first or last ex: db.emp.updateOne({eno:100},{$pop:{skills:1(last)}/-1(first)}}) 
+                          $pull : removes one element matched with a condition ex: db.emp.updateOne({eno:100},{$pull:{skills:"css"}})
+
+Connecting to MongoDB Database
+----------------------------------
+1. install mongoose(MongoDB ODM - object document mapping tool) and connect to MongoDB server
+   npm install mongoose
+after successful start of db we should start our http server
+
+2. create schema of resource 
+3. create model of that schema
+4. perform db operations on that model
+
+
+all db operations are blocking operations
+whenever a resource is created then only the schema validation will work, while modifications they wont work
+server.js
+1. creation of a http server
+//npm install express
+import exp from 'express';
+
+const app = exp();
+
+2. body parser middleware - without this put and delete request wont work properly
+app.use(exp.json())
+  ->import cookieParser from 'cookie-parser';  
+    app.use(cookieParser()); // Place this near app.use(exp.json())
+
+3. error handling middleware - keep this at the end so that it doesnt interfere with the other parsers
+function errorHandler(err,req,res,next){
+    res.json({message:"error has occured!",reason:err.message})
+}
+app.use(errorHandler)
+
+4. Connect to database(i.e mongodb)
+//npm install mongoose
+import {connect} from 'mongoose'
+
+async function connectDB(){
+    try{
+        let res = await connect('mongodb://localhost:27017/<database_name>')
+        app.listen(4000,()=>console.log("listening to port 4000"))
+        console.log("db connection success!")
+    }
+    catch(err){
+        console.log("error has occured while connecting to the database")
+    }
+}
+
+5. getting the apis from the apis folder
+import {userApp} from "../apis/userApi.js"
+import {productApp} from "../apis/productApi.js"
+
+app.use('/apis/user-api',userApp)
+app.use('/apis/product-api',productApp)
+
+###################################################################
+
+create a user schema(models/UserModel.js)
+-------------------------
+import {Schema,model} from 'mongoose'
+
+const userSchema = new Schema({
+    <name of attribute/column>:{
+        type:,
+        required:[true,"<error-msg>"],
+        default:<value>
+        minlength/min(if it is a number):[]
+    },
+    .....
+},{
+    strict:"throw", // setting this to allow makes sure that developers will be able to see the errors if any and resolve them
+    timestamps:true, // creates timestamps (createdAt and modifiedAt)
+    versionKey:false // ensures that versionKey will not be added to the db
+})
+export const UserModel = model("<collection_name(very important....if wrong is given then a lot of problems we will caused and it should be singular)>",userSchema)
+
+example:
+import {Schema,model} from 'mongoose'
+
+// const cartSchema = new Schema({
+//     product:{
+//         type:Schema.Types.ObjectId, //refers to the id of the product but doesnt know its internal structure
+//         ref: "ecomDB" //name of the product model
+//     }
+// })
+const cartSchema = new Schema({
+    product:{
+        type:Schema.Types.ObjectId,
+        ref:"ecomDB"
+    },
+    quantity:{
+        type:Number,
+        default:1,
+    }
+})
+
+const userSchema = new Schema({
+    name:{
+        type:String,
+        required:[true,"name is required"]
+    },
+    email:{
+        type:String,
+        required:[true,"email is required"],
+        unique:[true,'duplicate user!'] //not a validator but only an option/helper, add to index
+    },
+    password:{
+        type:String,
+        required:[true,"password is required"],
+        minlength:[4,"min length is 4"]
+    },
+    cart:{
+        type:[cartSchema] //here we will not store the product object but we will store the id which will be the reference of the product object
+    }
+},{
+    strict:"throw",
+    timestamps:true
+})
+
+export const UserModel = model('eUser',userSchema)
+
+-------------------------
+create a product schema(models/ProductModel.js)
+-------------------------
+import {Schema,model} from 'mongoose'
+
+const productSchema = new Schema({
+    <name of attribute/column>:{
+        type:,
+        required:[true,"<error-msg>"],
+        default:<value>
+        minlength/min(if it is a number):[]
+    },
+    .....
+},{
+    strict:"throw", // setting this to allow makes sure that developers will be able to see the errors if any and resolve them
+    timestamps:true, // creates timestamps (createdAt and modifiedAt)
+    versionKey:false // ensures that versionKey will be added to the db
+})
+export const ProductModel = model("<collection_name(very important....if wrong is given then a lot of problems we will caused and it should be singular)>",productSchema)
+
+
+example:
+import {Schema,model} from 'mongoose'
+
+const productSchema = new Schema({
+    productName:{
+        type:String,
+        required:[true,"product name required"]
+    },
+    price:{
+        type:Number,
+        required:[true,"price is required"]
+    },
+    brand:{
+        type:String,
+        required:[true,"required: brand"]
+    }
+},{
+    strict:"throw",
+    timestamps:true
+})
+
+export const ProductModel = model("ecomDB",productSchema)
+-------------------------
+
+###################################################################
+api routes-for now we are just using postman api or rest client to check if the requests are correct or not later will be for the frontend
+CRUD operations are done here and also few other 
+apis/userApi.js
+------------------
+//create a mini express using the Router() this is done so that the code will be clean and we can differentiate which is prodcut route and user route
+import exp from 'express'
+import {} from "../models/UserModel.js"
+import {hash,compare} from 'bcryptjs'
+import {verifyToken} from "/middleware/verifyToken.js"
+import jwt from 'jsonwebtoken'
+
+
+export const userApp = exp.Router()
+
+//get users
+userApp.get('/users',async (req,res)=>{
+    //read users from the db
+    let user = await UserModel.find()
+    res.status(<code>).json({message:"",payload:user})
+})
+
+//create users
+userApp.post("/users",async(req,res)=>{
+    //get the user from the request body
+    let user = req.body;
+    //run validators to avoid the password trap
+    await new UserModel(user).validate();
+    //hash the password
+    let hashedPassword = await hashed(user.password,12)
+    //create a new user document and replace the password
+    let userDoc = await UserModel(user)
+    userDoc.password = hashedPassword
+    //save it to db
+    await userDoc.save({validateBeforeSave:false})
+    //send res
+    res.status(201).json({message:"user created!"})
+})
+
+//authenticate - post method is used here
+userApp.post("/auth",async (req,res)=>{
+    //get the details from request body
+    let {username,password} = req.body
+    //check username if it exists or not
+    let userDB = await UserModel.findOne({username:username})
+    if(userDB === null){
+        return res.status(404).json({message:"user not found!"})
+    }
+    //check for password as well
+    //since the password is hashed we are going to use the compare from bcryptjs
+    let passMatch = await compare(password,userDB.password) //compare() : checks the passwords if they match like if the password is hashed then it converts to a normal one and then checks, returns a boolean
+    if(!passMatch){
+        return res.status().json({})
+    }
+    //create signed tokens
+    let signedToken = jwt.sign({username:username},
+    'secret', //secret key - used to verify the generated token
+    {expiresIn:20} // expiration time in seconds
+    )
+    //save the token as an httpOnly cookie in res
+    res.cookie('token',signedToken,{httpOnly:true,
+    secure:false, //since we are using only http
+    sameSite:"lax" //lax - relax the restrictions
+    })
+    //send the res
+    res.status.json({})
+})
+
+
+//read user by their id
+userApp.get('/users/:uid',async(req,res)=>{
+    //get the id from the url
+    let uid = req.params.uid
+    //find the user in db
+    let user = await UserModel.findById(uid)
+    //send res
+    res.status().json({message:"",payload:})
+})
+
+//read the user : projection(display only necessary content)
+userApp.get('/users/:id',async(req,res)=>{
+    //get user
+    let user = await UserModel.find({},{username:1,_id:0,age:1})
+    //send res
+    res.status(200).json({message:"",payload:})
+})
+
+//update the user details
+userApp.put("/users/:id",async(req,res)=>{
+    //get the id
+    let uid = req.params.id
+    //get the modified user from the body
+    let modifiedUser = req.body
+    //make the updates
+    let updatedUser = await UserModel.findByIdAndUpdate(uid,
+    {$set:{...modifiedUser}}, //object destructuring - 
+    {new:true,runValidators:true}) //runValidators ensures that while updating the details the conditions set in the schema are going to be followed
+    // if this is not set then validators run only during creation of the user
+
+    //send res
+    res.status().json()
+})
+
+//update the cart of the user
+userApp.put('/user-cart/userid/:uid/productid/:pid',async(req,res)=>{
+    //get the uid and pid
+    let {uid,pid} = req.params
+    //check if user exists
+    let user = await UserModel.findById(uid)
+    if(!user){return res.status().json()}
+    //check if product exists
+    let product = user.cart.find(i=> i.product._id.equals(pid))
+    if(product){
+        //increment the count of the product
+        let modifiedUser = await UserModel.findOneAndUpdate(
+            {"cart.product":pid},
+            {$inc:{"cart.$.quantity":1}},
+            {new:true}
+        ).populate("cart.product","productName price")
+        //send res
+        return res.status().json({message:"",payload:modifiedUser})
+    }else{
+        //push the product to cart
+        let modifiedUser = await UserModel.findByIdAndUpdate(
+            uid,
+            {$push:{cart:{product:pid,quantity:1}}},
+            {new:true}
+        ).populate("cart.product","productName price")
+        //send res
+        return res.status().json({message:"",payload:modifiedUser})
+    }
+})
+
+//delete the user
+userApp.delete('/users/:id',async(req,res)=>{
+    //get the id from the url
+    let uid = req.params.id
+    //find the user
+    let user = await UserModel.findByIdAndDelete(uid)
+    //send the res 
+    res.status().json({message:"",payload:})
+})
+-------------------------------
+apis/productApi.js
+--------------------------
+import exp from 'express'
+
+export const productApp = exp.Router()
+
+//create products
+productApp.post('/products',async(req,res)=>{
+    //get the product from the body
+    let prod = req.body
+    //create a document
+    let productDoc=new ProductModel(prod)
+    //save
+    await prodDocument.save()
+    //send res
+    res.status().json({})
+})
+
+//get the products
+productApp.get('/products',async(req,res)=>{
+    //get the products list
+    let prodList = await ProductModel.find()
+    //send res
+    res.status().json({message:"",payload:prodList})
+})
+----------------------------------------------------
+
+####################################################################
+req.http(for validating the requests)
+
+### is this used to comment and at the same time distinguish between the routes
+a. GET : => display the content in the collection
+
+b. POST : =>create a row in the collection
+          =>requires Content-Type: application/json
+
+            {}
+
+c. PUT : => update the details
+         =>requires Content-Type: application/json (in some cases this content-type is not required)
+
+           {}
+
+d. DELETE : => delete something
+
+
+########################################################################
+additional middlewares - 
+middleware/verifyToken.js
+-------------------------------
+import jwt from 'jsonwebtoken'
+
+export function verifyToken(req,res,next){
+    //logic
+    //1. get the token from req cookies
+    let signedToken = req.cookies.token
+    if(!signedToken){return res.status().json()}
+    //2. verify the token
+    let decodedToken = jwt.verify(signedToken,"secret")
+    next()
+}
+
+in userApi.js
+userApp.get('/users/:id', verifyToken, async(req,res)=>{ ... })
+-------------------------------
+########################################################################
+ADDITIONAL THINGS TO IMPORT
+bcryptjs
+jsonwebtoken
+
+########################################################################
+Status Codes:
+200: OK (Success)
+201: Created (New data added)
+400: Bad Request (User error)
+401: Unauthorized (Login failed)
+404: Not Found
+500: Server Error
+########################################################################
+->Never hardcode secrets (like 'secret' or your MongoDB URL) in the code. Use a .env file and the dotenv package so hackers can't see them on GitHub.

@@ -26,12 +26,14 @@ function AuthorDashboard() {
     navigate('/login');
   };
 
+  const BASE = "http://localhost:5000"
+  //getting the articles of the author
   useEffect(() => {
     if (!user) return;
     async function getArticles() {
       setLoading(true);
       try {
-        let res = await axios.get(`http://localhost:4000/author-api/article`, { withCredentials: true });
+        let res = await axios.get(`${BASE}/author-api/article`, { withCredentials: true });
         setArticles(res.data.payload);
       } catch (err) {
         setError(err.message);

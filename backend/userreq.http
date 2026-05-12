@@ -1,13 +1,13 @@
 ###--------------------------------
 ###users!
 ###user register
-POST http://localhost:4000/user-api/users
+POST http://localhost:5000/user-api/users
 Content-Type: application/json
 
 {
     "firstName":"admin",
     "lastName":"test",
-    "email":"admin@mail.com",
+    "email":"admin@gmail.com",
     "password":"admin123",
     "profileImageURL":"https://example.com/avatars/user.png",
     "role":"ADMIN"

@@ -2,37 +2,27 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import axios from 'axios'
 
+const API_BASE_URL = "http://localhost:5000"
+
 export const useAuth = create(
   persist(
     (set) => ({
       currentUser: null,
-      loading: false,
+      loginLoading: false,
+      checkLoading: false,
       error: null,
       isAuthenticated: false,
 
       login: async (userCredWithRole) => {
         const { role, ...userCredObj } = userCredWithRole
         try {
-          set({ loading: true, error: null })
-
-          // Route to the correct login endpoint based on role
-          const endpoint =
-            role === 'ADMIN'
-              ? 'http://localhost:4000/admin-api/authenticate'
-              : 'http://localhost:4000/common-api/login'
-
-          const res = await axios.post(endpoint, userCredObj, {
-            withCredentials: true,
-          })
-
-          set({
-            loading: false,
-            isAuthenticated: true,
-            currentUser: res.data.payload,
-          })
+          set({ loginLoading: true, error: null })
+          const endpoint = `${API_BASE_URL}/common-api/login`
+          const res = await axios.post(endpoint, userCredObj, { withCredentials: true })
+          set({ loginLoading: false, isAuthenticated: true, currentUser: res.data.payload })
         } catch (err) {
           set({
-            loading: false,
+            loginLoading: false,
             isAuthenticated: false,
             currentUser: null,
             error: err.response?.data?.error || 'Login failed',
@@ -42,48 +32,21 @@ export const useAuth = create(
 
       logout: async () => {
         try {
-          set({ loading: true, error: null })
-
-          await axios.get('http://localhost:4000/common-api/logout', {
-            withCredentials: true,
-          })
-
-          set({
-            loading: false,
-            isAuthenticated: false,
-            currentUser: null,
-          })
-        } catch (err) {
-          set({
-            loading: false,
-            isAuthenticated: false,
-            currentUser: null,
-            error: err.response?.data?.error || 'Logout failed',
-          })
-        }
+          await axios.get(`${API_BASE_URL}/common-api/logout`, { withCredentials: true })
+        } catch (_) { }
+        set({ loginLoading: false, isAuthenticated: false, currentUser: null })
       },
 
       checkAuth: async () => {
         try {
-          set({ loading: true, error: null })
-
+          set({ checkLoading: true })
           const resObj = await axios.get(
-            'http://localhost:4000/common-api/check-auth',
-            { withCredentials: true }
+            `${API_BASE_URL}/common-api/check-auth`,
+            { withCredentials: true, timeout: 8000 }
           )
-
-          set({
-            loading: false,
-            isAuthenticated: true,
-            currentUser: resObj.data.payload,
-          })
-        } catch (err) {
-          set({
-            loading: false,
-            isAuthenticated: false,
-            currentUser: null,
-            error: err.response?.data?.error,
-          })
+          set({ checkLoading: false, isAuthenticated: true, currentUser: resObj.data.payload })
+        } catch {
+          set({ checkLoading: false, isAuthenticated: false, currentUser: null })
         }
       },
 
@@ -91,6 +54,10 @@ export const useAuth = create(
     }),
     {
       name: 'auth-storage',
+      partialize: (state) => ({
+        currentUser: state.currentUser,
+        isAuthenticated: state.isAuthenticated,
+      }),
     }
   )
 )

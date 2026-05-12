@@ -13,7 +13,15 @@ config() //process.env
 
 const app = exp()
 //use cors middleware
-app.use(cors({ origin: ['http://localhost:5173'],credentials:true }))
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'https://blog-suntek.vercel.app',
+    'http://localhost:5174',
+    'http://localhost:3000'
+  ],
+  credentials: true
+}))
 app.use(exp.json())//body parser json
 //add cookie parser middleware 
 app.use(cookieParser())

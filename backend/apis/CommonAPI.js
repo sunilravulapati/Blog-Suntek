@@ -32,7 +32,7 @@ commonApp.get('/logout', async (req, res) => {
 })
 
 //changing the password - protected!
-commonApp.put('/change-password', verifyToken, async (req, res) => {
+commonApp.put('/change-password', verifyToken('USER', 'AUTHOR', 'ADMIN'), async (req, res) => {
     let { email, oldPassword, newPassword } = req.body
     //find if user exists
     let user = await UserTypeModel.findOne({ email })

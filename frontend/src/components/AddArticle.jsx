@@ -7,6 +7,8 @@ import { inputClass, labelClass, formGroup, errorClass } from '../styles/common'
 
 const CATEGORIES = ['Technology', 'Education', 'AI', 'Programming', 'Design', 'Career']
 
+const BASE = "http://localhost:5000"
+
 function AddArticle() {
   const navigate = useNavigate()
   const { register, handleSubmit, formState: { errors }, watch } = useForm()
@@ -17,7 +19,7 @@ function AddArticle() {
   const onSubmit = async (formObj) => {
     try {
       await axios.post(
-        "http://localhost:4000/author-api/articles",
+        `${BASE}/author-api/articles`,
         formObj,
         { withCredentials: true }
       )

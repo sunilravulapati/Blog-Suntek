@@ -15,6 +15,7 @@ function Register() {
     return () => { if (preview) URL.revokeObjectURL(preview) }
   }, [preview])
 
+  const BASE = "http://localhost:5000"
   const onSubmit = async (formObj) => {
     setLoading(true)
     setError(null)
@@ -33,8 +34,8 @@ function Register() {
 
     try {
       const endpoint = role === 'author'
-        ? "http://localhost:4000/author-api/users"
-        : "http://localhost:4000/user-api/users"
+        ? `${BASE}/author-api/users`
+        : `${BASE}/user-api/users`
 
       const resObj = await axios.post(endpoint, formData, {
         headers: { "Content-Type": "multipart/form-data" },

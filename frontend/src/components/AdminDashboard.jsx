@@ -13,7 +13,9 @@ import {
 } from '../styles/common'
 import { useAuth } from '../store/authStore'
 
-// ─── Tab Button ───────────────────────────────────────
+const BASE = "http://localhost:5000"
+
+//Tab Button
 const TabBtn = ({ active, onClick, children }) => (
   <button
     onClick={onClick}
@@ -35,7 +37,7 @@ const StatCard = ({ label, value, accent }) => (
   </div>
 )
 
-// ─── User Row ─────────────────────────────────────────
+//User Row
 const UserRow = ({ user, onBlock, onUnblock, actionLoading }) => (
   <div className="flex items-center justify-between bg-[#f5f5f7] rounded-2xl px-6 py-4 hover:bg-[#ebebf0] transition-colors duration-200">
     <div className="flex items-center gap-4 min-w-0">
@@ -85,7 +87,7 @@ const UserRow = ({ user, onBlock, onUnblock, actionLoading }) => (
   </div>
 )
 
-// ─── Article Row ──────────────────────────────────────
+//Article Row
 const ArticleRow = ({ article, onToggle, actionLoading }) => (
   <div className="relative flex items-start justify-between bg-[#f5f5f7] rounded-2xl px-6 py-5 hover:bg-[#ebebf0] transition-colors duration-200 gap-4">
     <div className="min-w-0 flex-1">
@@ -120,7 +122,7 @@ const ArticleRow = ({ article, onToggle, actionLoading }) => (
   </div>
 )
 
-// ─── Main Dashboard ───────────────────────────────────
+//Main Dashboard
 function AdminDashboard() {
   const { currentUser, logout } = useAuth()
   const adminId = currentUser?._id
@@ -140,12 +142,12 @@ function AdminDashboard() {
     setTimeout(() => setToast(null), 3000)
   }
 
-  // ── Fetch Users ──────────────────────────────────────
+  //Fetch Users
   const fetchUsers = async () => {
     setLoadingUsers(true)
     setError(null)
     try {
-      const res = await axios.get(`http://localhost:4000/admin-api/users/${adminId}`, { withCredentials: true })
+      const res = await axios.get(`${BASE}/admin-api/users/${adminId}`, { withCredentials: true })
       setUsers(res.data.payload || [])
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to fetch users')
@@ -154,12 +156,12 @@ function AdminDashboard() {
     }
   }
 
-  // ── Fetch Articles ────────────────────────────────────
+  //Fetch Articles 
   const fetchArticles = async () => {
     setLoadingArticles(true)
     setError(null)
     try {
-      const res = await axios.get(`http://localhost:4000/admin-api/articles/${adminId}`, { withCredentials: true })
+      const res = await axios.get(`${BASE}/admin-api/articles/${adminId}`, { withCredentials: true })
       setArticles(res.data.payload || [])
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to fetch articles')
@@ -175,11 +177,11 @@ function AdminDashboard() {
     }
   }, [adminId])
 
-  // ── Block User ────────────────────────────────────────
+  //Block User
   const handleBlock = async (uid) => {
     setUserActionLoading(uid)
     try {
-      await axios.put(`http://localhost:4000/admin-api/block/${uid}/adminId/${adminId}`, {}, { withCredentials: true })
+      await axios.put(`${BASE}/admin-api/block/${uid}/adminId/${adminId}`, {}, { withCredentials: true })
       setUsers(prev => prev.map(u => u._id === uid ? { ...u, isActive: false } : u))
       showToast('User blocked successfully')
     } catch (err) {
@@ -189,11 +191,11 @@ function AdminDashboard() {
     }
   }
 
-  // ── Unblock User ──────────────────────────────────────
+  //Unblock User
   const handleUnblock = async (uid) => {
     setUserActionLoading(uid)
     try {
-      await axios.put(`http://localhost:4000/admin-api/unblock/${uid}/adminId/${adminId}`, {}, { withCredentials: true })
+      await axios.put(`${BASE}/admin-api/unblock/${uid}/adminId/${adminId}`, {}, { withCredentials: true })
       setUsers(prev => prev.map(u => u._id === uid ? { ...u, isActive: true } : u))
       showToast('User unblocked successfully')
     } catch (err) {
@@ -203,13 +205,13 @@ function AdminDashboard() {
     }
   }
 
-  // ── Toggle Article ────────────────────────────────────
+  //Toggle Article
   const handleToggleArticle = async (articleId, isActive) => {
     setArticleActionLoading(articleId)
     const endpoint = isActive ? 'deactivate' : 'activate'
     try {
       await axios.put(
-        `http://localhost:4000/admin-api/${endpoint}/${articleId}/adminId/${adminId}`,
+        `${BASE}/admin-api/${endpoint}/${articleId}/adminId/${adminId}`,
         {},
         { withCredentials: true }
       )
@@ -224,7 +226,7 @@ function AdminDashboard() {
     }
   }
 
-  // ── Derived stats ─────────────────────────────────────
+  // Stats for overview 
   const activeUsers = users.filter(u => u.isActive).length
   const blockedUsers = users.filter(u => !u.isActive).length
   const activeArticles = articles.filter(a => a.isArticleActive).length

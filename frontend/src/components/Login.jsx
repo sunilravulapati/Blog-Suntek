@@ -10,7 +10,7 @@ function Login() {
   const login = useAuth(state => state.login)
   const isAuthenticated = useAuth(state => state.isAuthenticated)
   const currentUser = useAuth(state => state.currentUser)
-  const loading = useAuth(state => state.loading)
+  const loading = useAuth(state => state.loginLoading)
   const error = useAuth(state => state.error)
   const navigate = useNavigate()
 
@@ -18,16 +18,22 @@ function Login() {
     await login(userCredObj)
   }
 
+  const BASE = "http://localhost:5000"
+  
+  //redirect the user to respective dashboard based on their role after login
   useEffect(() => {
-    if (isAuthenticated) {
-      toast.success("Logged in successfully")
-      if (currentUser.role === 'USER') navigate('/user-dashboard')
-      if (currentUser.role === 'AUTHOR') navigate('/author-dashboard')
-      if (currentUser.role === 'ADMIN') navigate('/admin-dashboard')
+    if (isAuthenticated && currentUser?.role) {
+      if (currentUser.role === 'USER') navigate('/user-dashboard', { replace: true })
+      if (currentUser.role === 'AUTHOR') navigate('/author-dashboard', { replace: true })
+      if (currentUser.role === 'ADMIN') navigate('/admin-dashboard', { replace: true })
     }
   }, [isAuthenticated, currentUser])
 
-  if (loading) return <p className={loadingClass}>Signing you in…</p>
+  // Only show loading when actively logging in
+  if (loading && !isAuthenticated) return <p className={loadingClass}>Signing you in…</p>
+
+  // If authenticated but redirect hasn't fired yet then show nothing
+  if (isAuthenticated) return null
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4">

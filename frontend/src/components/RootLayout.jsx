@@ -5,20 +5,12 @@ import { useEffect } from 'react'
 import { useAuth } from '../store/authStore'
 
 function RootLayout() {
+  const checkAuth = useAuth(state => state.checkAuth)
 
-  const checkAuth = useAuth(state=>state.checkAuth)
-  const loading = useAuth(state=>state.loading)
-  const user = useAuth(state=>state.currentUser)
-
-  useEffect(()=>{
+  //check user authentication status on app load
+  useEffect(() => {
     checkAuth()
-    // console.log(user)
-  },[])
-
-  if(loading){
-    return <p className='text-center mt-10'>Loading...</p>
-  }
-
+  }, [])
   return (
     <div>
       <Header />
