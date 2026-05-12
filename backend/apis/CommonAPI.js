@@ -1,6 +1,7 @@
 import exp from 'express'
 import { authenticate } from '../services/authService.js'
 import { UserTypeModel } from '../models/UserModel.js'
+import { ArticleModel } from '../models/ArticleModel.js'
 import { verifyToken } from '../middleware/verifyToken.js'
 import { hash, compare } from 'bcryptjs'
 
@@ -62,4 +63,15 @@ commonApp.put('/change-password', verifyToken('USER', 'AUTHOR', 'ADMIN'), async 
 //handling page refresh
 commonApp.get('/check-auth', verifyToken('USER', 'AUTHOR', 'ADMIN'), async (req, res) => {
     res.status(200).json({ message: "authenticated", payload: req.user })
+})
+
+//get article by id
+commonApp.get('/articles/:id', verifyToken('USER', 'AUTHOR', 'ADMIN'), async (req, res) => {
+    let article = await ArticleModel.findById(req.params.id)
+        .populate("author", "firstName lastName email")
+        .populate("comments.user", "email firstName")
+    if (!article) {
+        return res.status(404).json({ message: "Article not found" })
+    }
+    res.status(200).json({ message: "article found", payload: article })
 })

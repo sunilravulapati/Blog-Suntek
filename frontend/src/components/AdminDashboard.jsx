@@ -12,6 +12,7 @@ import {
   deleteBtn, editBtn
 } from '../styles/common'
 import { useAuth } from '../store/authStore'
+import { useNavigate } from 'react-router'
 
 const BASE = "http://localhost:5000"
 
@@ -29,7 +30,7 @@ const TabBtn = ({ active, onClick, children }) => (
   </button>
 )
 
-// ─── Stat Card ────────────────────────────────────────
+// Stat Card
 const StatCard = ({ label, value, accent }) => (
   <div className="bg-[#f5f5f7] rounded-2xl p-6 flex flex-col gap-1">
     <span className="text-xs font-semibold text-[#a1a1a6] uppercase tracking-widest">{label}</span>
@@ -88,11 +89,14 @@ const UserRow = ({ user, onBlock, onUnblock, actionLoading }) => (
 )
 
 //Article Row
-const ArticleRow = ({ article, onToggle, actionLoading }) => (
+const ArticleRow = ({ article, onToggle, actionLoading, navigate }) => (
   <div className="relative flex items-start justify-between bg-[#f5f5f7] rounded-2xl px-6 py-5 hover:bg-[#ebebf0] transition-colors duration-200 gap-4">
-    <div className="min-w-0 flex-1">
+    <div 
+      className="min-w-0 flex-1 cursor-pointer group"
+      onClick={() => navigate(`/article/${article._id}`, { state: { article } })}
+    >
       <span className={tagClass}>{article.category}</span>
-      <p className="text-sm font-semibold text-[#1d1d1f] leading-snug tracking-tight mt-1 truncate">
+      <p className="text-sm font-semibold text-[#1d1d1f] leading-snug tracking-tight mt-1 truncate group-hover:text-blue-600 transition-colors">
         {article.title}
       </p>
       <p className="text-xs text-[#a1a1a6] mt-1">
@@ -125,7 +129,8 @@ const ArticleRow = ({ article, onToggle, actionLoading }) => (
 //Main Dashboard
 function AdminDashboard() {
   const { currentUser, logout } = useAuth()
-  const adminId = currentUser?._id
+  const adminId = currentUser?._id || currentUser?.userId
+  const navigate = useNavigate()
 
   const [activeTab, setActiveTab] = useState('overview')
   const [users, setUsers] = useState([])
@@ -329,6 +334,7 @@ function AdminDashboard() {
                       article={article}
                       onToggle={handleToggleArticle}
                       actionLoading={articleActionLoading}
+                      navigate={navigate}
                     />
                   ))}
                 </div>
@@ -337,7 +343,7 @@ function AdminDashboard() {
           </div>
         )}
 
-        {/* ── Users Tab ── */}
+        {/* Users Tab */}
         {activeTab === 'users' && (
           <div className={section}>
             <div className="flex items-center justify-between mb-6">
@@ -367,7 +373,7 @@ function AdminDashboard() {
           </div>
         )}
 
-        {/* ── Articles Tab ── */}
+        {/* Articles Tab */}
         {activeTab === 'articles' && (
           <div className={section}>
             <div className="flex items-center justify-between mb-6">
@@ -389,6 +395,7 @@ function AdminDashboard() {
                     article={article}
                     onToggle={handleToggleArticle}
                     actionLoading={articleActionLoading}
+                    navigate={navigate}
                   />
                 ))}
               </div>

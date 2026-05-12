@@ -1431,3 +1431,18 @@ Status Codes:
 500: Server Error
 ########################################################################
 ->Never hardcode secrets (like 'secret' or your MongoDB URL) in the code. Use a .env file and the dotenv package so hackers can't see them on GitHub.
+->whenever a route is to be made authenticated route then the cookies attach itself to the request while transfer
+->cookie is the storage location while the token is the value
+    1.post request from client to login route
+    2.lr stores the token in the cookie storage
+    3. send response to client
+    4. client now while any request is sent it will first check the cookie storage
+    5. from there it will read the tokens
+    6. client now sends the req with token to what ever route(public)
+        if the route is public then no issue
+        if the route is protected then there will be a middleware which will check the tokens, then only the protected route is accessible
+->template literals
+    let a=10,b=20
+    we want to print it like this "a is 10 and b is 20"
+    for this we will use the backtick operator ( `` )
+    console.log(`a is ${a}, b is ${b} and c is ${c}`)

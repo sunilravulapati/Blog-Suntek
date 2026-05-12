@@ -47,7 +47,7 @@ function ArticleById() {
       if (location.state?.article) { setArticle(location.state.article); return }
       try {
         setLoading(true)
-        const res = await axios.get(`${BASE}/author-api/article/${id}`, { withCredentials: true })
+        const res = await axios.get(`${BASE}/common-api/articles/${id}`, { withCredentials: true })
         setArticle(res.data.payload)
       } catch (err) {
         setError(err.message)
