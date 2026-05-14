@@ -7,7 +7,7 @@ import { inputClass, labelClass, formGroup, errorClass } from '../styles/common'
 
 const CATEGORIES = ['Technology', 'Education', 'AI', 'Programming', 'Design', 'Career']
 
-const BASE = "http://localhost:5000"
+const BASE = import.meta.env.PROD ? "https://blog-suntek-1.onrender.com" : "http://localhost:5000";
 
 function AddArticle() {
   const navigate = useNavigate()

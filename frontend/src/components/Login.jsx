@@ -14,11 +14,11 @@ function Login() {
   const error = useAuth(state => state.error)
   const navigate = useNavigate()
 
+  const BASE = import.meta.env.PROD ? "https://blog-suntek-1.onrender.com" : "http://localhost:5000";
+
   const onUserLogin = async (userCredObj) => {
     await login(userCredObj)
   }
-
-  const BASE = "http://localhost:5000"
   
   //redirect the user to respective dashboard based on their role after login
   useEffect(() => {

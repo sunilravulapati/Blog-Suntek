@@ -11,7 +11,7 @@ function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center py-8 gap-4">
           <div className="flex flex-col items-center md:items-start gap-1">
             <p className={`${mutedText} text-center py-6`}>
-              © {new Date().getFullYear()} BlogApp. Built with care.
+              © {new Date().getFullYear()} BlogApp. Built using MERN stack. By Sunil
             </p>
           </div>
         </div>

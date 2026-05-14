@@ -10,12 +10,13 @@ function Register() {
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
   const [preview, setPreview] = useState(null)
+  
+  const BASE = import.meta.env.PROD ? "https://blog-suntek-1.onrender.com" : "http://localhost:5000";
 
   useEffect(() => {
     return () => { if (preview) URL.revokeObjectURL(preview) }
   }, [preview])
 
-  const BASE = "http://localhost:5000"
   const onSubmit = async (formObj) => {
     setLoading(true)
     setError(null)

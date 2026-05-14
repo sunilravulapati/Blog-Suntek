@@ -26,7 +26,7 @@ function AuthorDashboard() {
     navigate('/login');
   };
 
-  const BASE = "http://localhost:5000"
+  const BASE = import.meta.env.PROD ? "https://blog-suntek-1.onrender.com" : "http://localhost:5000";
   //getting the articles of the author
   useEffect(() => {
     if (!user) return;

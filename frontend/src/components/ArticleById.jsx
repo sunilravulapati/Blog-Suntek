@@ -22,7 +22,7 @@ function ArticleById() {
   const [commenting, setCommenting] = useState(false)
   const { register, handleSubmit, reset } = useForm()
 
-  const BASE = "http://localhost:5000"
+  const BASE = import.meta.env.PROD ? "https://blog-suntek-1.onrender.com" : "http://localhost:5000";
   //adding comments to the articles
   const addComment = async (data) => {
     setCommenting(true)

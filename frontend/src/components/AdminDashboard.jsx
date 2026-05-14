@@ -14,7 +14,7 @@ import {
 import { useAuth } from '../store/authStore'
 import { useNavigate } from 'react-router'
 
-const BASE = "http://localhost:5000"
+const BASE = import.meta.env.PROD ? "https://blog-suntek-1.onrender.com" : "http://localhost:5000";
 
 //Tab Button
 const TabBtn = ({ active, onClick, children }) => (

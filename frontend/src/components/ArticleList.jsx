@@ -23,7 +23,7 @@ function AuthorArticles() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const BASE =  "http://localhost:5000"
+  const BASE = import.meta.env.PROD ? "https://blog-suntek-1.onrender.com" : "http://localhost:5000";
 
   console.log("user in author profile",user)
   

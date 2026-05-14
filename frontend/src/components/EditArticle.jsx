@@ -38,7 +38,7 @@ function EditArticle() {
     setValue("content", article.content);
   }, [article]);
 
-  const BASE = "http://localhost:5000"
+  const BASE = import.meta.env.PROD ? "https://blog-suntek-1.onrender.com" : "http://localhost:5000";
 
   // update the article
   const updateArticle = async (data) => {

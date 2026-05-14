@@ -20,7 +20,8 @@ function UserDashboard() {
     navigate('/login')
   }
 
-  const BASE = "http://localhost:5000"
+  const BASE = import.meta.env.PROD ? "https://blog-suntek-1.onrender.com" : "http://localhost:5000";
+
   useEffect(() => {
     async function getArticles() {
       setLoading(true);

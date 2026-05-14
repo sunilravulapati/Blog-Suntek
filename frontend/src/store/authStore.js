@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import axios from 'axios'
 
-const API_BASE_URL = "http://localhost:5000"
+const API_BASE_URL = import.meta.env.PROD ? "https://blog-suntek-1.onrender.com" : "http://localhost:5000"
 
 export const useAuth = create(
   persist(
