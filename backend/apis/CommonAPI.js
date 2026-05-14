@@ -12,22 +12,24 @@ commonApp.post('/login', async (req, res) => {
     let userCred = req.body
     //call authenticate function
     let { token, user } = await authenticate(userCred)
+    const isProd = process.env.NODE_ENV === 'production' || process.env.RENDER === 'true';
     //save the token as a httponly cookie
     res.cookie("token", token, {
         httpOnly: true,
-        secure: false,
-        sameSite: "lax"
+        secure: isProd,
+        sameSite: isProd ? "none" : "lax"
     })
     //send the res
     res.status(200).json({ message: "logged in successfully!", payload: user })
 })
 
 commonApp.get('/logout', async (req, res) => {
+    const isProd = process.env.NODE_ENV === 'production' || process.env.RENDER === 'true';
     //clear the cookie named 'token'
     res.clearCookie('token', {
         httpOnly: true,
-        secure: false,
-        sameSite: "lax"
+        secure: isProd,
+        sameSite: isProd ? "none" : "lax"
     })
     res.status(200).json({ message: "logged out successfully" })
 })

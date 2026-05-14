@@ -12,6 +12,7 @@ import cors from 'cors'
 config() //process.env
 
 const app = exp()
+app.set('trust proxy', 1) // trust first proxy for secure cookies
 //use cors middleware
 app.use(cors({
   origin: [
